@@ -95,7 +95,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile menu */}
       <div className={`md:hidden ${isOpen ? "block" : "hidden"}`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="flex flex-col px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <NavLink to="/" onClick={closeMenu}>Home</NavLink>
           <NavLink to="/browse" onClick={closeMenu}>Browse eBooks</NavLink>
           <NavLink to="/upload" onClick={closeMenu}>Upload eBook</NavLink>
