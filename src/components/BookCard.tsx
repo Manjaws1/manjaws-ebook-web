@@ -34,19 +34,19 @@ const BookCard: React.FC<BookCardProps> = ({
         <h3 className="text-lg font-semibold line-clamp-2 mb-1">{title}</h3>
         <p className="text-sm text-gray-600 mb-2">{author}</p>
         <p className="text-xs text-gray-500 mb-4">{chapters} chapters</p>
-        <div className="mt-auto flex gap-2">
+        <div className="mt-auto flex flex-col sm:flex-row gap-2">
           {isPreviewAvailable && (
-            <Button variant="outline" size="sm" className="flex-1" asChild>
+            <Button variant="outline" size="sm" className="w-full" asChild>
               <Link to={`/preview/${id}`} className="flex items-center justify-center gap-1">
                 <Eye className="h-4 w-4" />
-                <span>Preview</span>
+                <span className="hidden xs:inline">Preview</span>
               </Link>
             </Button>
           )}
-          <Button size="sm" className="flex-1 bg-primary hover:bg-primary-700" asChild>
+          <Button size="sm" className="w-full bg-primary hover:bg-primary-700" asChild>
             <Link to={`/book/${id}`} className="flex items-center justify-center gap-1">
               <Download className="h-4 w-4" />
-              <span>Download</span>
+              <span className="hidden xs:inline">Download</span>
             </Link>
           </Button>
         </div>
