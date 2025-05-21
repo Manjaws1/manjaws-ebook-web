@@ -44,9 +44,8 @@ const BookCard: React.FC<BookCardProps> = ({
             </Button>
           )}
           <Button size="sm" className="w-full bg-primary hover:bg-primary-700" asChild>
-            <Link to={`/book/${id}`} className="flex items-center justify-center gap-1">
+            <Link to={`/book/${id}`} className="flex items-center justify-center">
               <Download className="h-4 w-4" />
-              <span className="hidden xs:inline">Download</span>
             </Link>
           </Button>
         </div>
