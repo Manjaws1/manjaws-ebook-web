@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Browse from "./pages/Browse";
 import Upload from "./pages/Upload";
+import Library from "./pages/Library";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/upload" element={<Upload />} />
+          <Route path="/library" element={<Library />} />
           <Route path="/admin" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
