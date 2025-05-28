@@ -1,29 +1,61 @@
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, UserCircle, LogIn } from "lucide-react";
+import LoginPrompt from "./LoginPrompt";
 
 interface NavLinkProps {
   to: string;
   children: React.ReactNode;
   onClick?: () => void;
+  requiresAuth?: boolean;
 }
 
-const NavLink: React.FC<NavLinkProps> = ({ to, children, onClick }) => (
-  <Link
-    to={to}
-    className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
-    onClick={onClick}
-  >
-    {children}
-  </Link>
-);
+const NavLink: React.FC<NavLinkProps> = ({ to, children, onClick, requiresAuth = false }) => {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // This would come from auth context in a real app
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (requiresAuth && !isLoggedIn) {
+      e.preventDefault();
+      setShowLoginPrompt(true);
+      if (onClick) onClick();
+      return;
+    }
+    if (onClick) onClick();
+  };
+
+  const handleLogin = () => {
+    setShowLoginPrompt(false);
+    navigate('/login');
+  };
+
+  return (
+    <>
+      <Link
+        to={to}
+        className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+        onClick={handleClick}
+      >
+        {children}
+      </Link>
+      <LoginPrompt 
+        isOpen={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
+        onLogin={handleLogin}
+      />
+    </>
+  );
+};
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // This would come from auth context in a real app
   const [isAdmin, setIsAdmin] = useState(false); // This would come from auth context in a real app
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -31,6 +63,19 @@ const Navbar: React.FC = () => {
 
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  const handleProtectedRoute = (route: string) => {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    navigate(route);
+  };
+
+  const handleLogin = () => {
+    setShowLoginPrompt(false);
+    navigate('/login');
   };
 
   return (
@@ -48,8 +93,8 @@ const Navbar: React.FC = () => {
           <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
             <NavLink to="/">Home</NavLink>
             <NavLink to="/browse">Browse eBooks</NavLink>
-            <NavLink to="/upload">Upload eBook</NavLink>
-            <NavLink to="/library">My Library</NavLink>
+            <NavLink to="/upload" requiresAuth={true}>Upload eBook</NavLink>
+            <NavLink to="/library" requiresAuth={true}>My Library</NavLink>
             
             {isLoggedIn ? (
               <>
@@ -98,8 +143,8 @@ const Navbar: React.FC = () => {
         <div className="flex flex-col px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <NavLink to="/" onClick={closeMenu}>Home</NavLink>
           <NavLink to="/browse" onClick={closeMenu}>Browse eBooks</NavLink>
-          <NavLink to="/upload" onClick={closeMenu}>Upload eBook</NavLink>
-          <NavLink to="/library" onClick={closeMenu}>My Library</NavLink>
+          <NavLink to="/upload" onClick={closeMenu} requiresAuth={true}>Upload eBook</NavLink>
+          <NavLink to="/library" onClick={closeMenu} requiresAuth={true}>My Library</NavLink>
           
           {isLoggedIn ? (
             <>
@@ -118,6 +163,12 @@ const Navbar: React.FC = () => {
           )}
         </div>
       </div>
+
+      <LoginPrompt 
+        isOpen={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
+        onLogin={handleLogin}
+      />
     </nav>
   );
 };
