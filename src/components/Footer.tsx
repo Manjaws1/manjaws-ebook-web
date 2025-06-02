@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Manjaws E-Book</h3>
             <p className="text-sm text-gray-300">
-              Your go-to platform for discovering, sharing, and reading e-books.
+              Your go-to platform for discovering, sharing, and reading e-books with advanced copyright protection.
             </p>
           </div>
           <div>
@@ -24,6 +24,16 @@ const Footer: React.FC = () => {
               <li>
                 <Link to="/browse" className="text-gray-300 hover:text-white text-sm">
                   Browse Books
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-gray-300 hover:text-white text-sm">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link to="/chat" className="text-gray-300 hover:text-white text-sm">
+                  AI Chat
                 </Link>
               </li>
               <li>
@@ -66,7 +76,7 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Subscribe</h3>
             <p className="text-sm text-gray-300 mb-2">
-              Stay updated with our latest e-book releases and news.
+              Stay updated with our latest e-book releases and blog posts.
             </p>
             <form className="flex">
               <input
@@ -84,7 +94,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
         <div className="border-t border-gray-700 mt-8 pt-6 text-sm text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Manjaws E-Book. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Manjaws E-Book. All rights reserved. Protected by advanced copyright technology.</p>
         </div>
       </div>
     </footer>

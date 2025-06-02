@@ -15,6 +15,9 @@ import Library from "./pages/Library";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminEbooks from "./pages/AdminEbooks";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +35,9 @@ const App = () => (
           <Route path="/browse" element={<Browse />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/library" element={<Library />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/chat" element={<Chat />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/ebooks" element={<AdminEbooks />} />

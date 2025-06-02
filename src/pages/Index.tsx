@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, Upload, Library, BookOpen } from "lucide-react";
+import { Search, Upload, Library, BookOpen, MessageCircle, Shield } from "lucide-react";
 import FeaturedBooks from "@/components/FeaturedBooks";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -21,7 +21,7 @@ const Index: React.FC = () => {
                 Discover and Share Your Favorite E-Books
               </h1>
               <p className="text-lg mb-8 text-gray-100 animate-slideIn">
-                A platform for readers and writers to discover, share, and discuss e-books on any topic. Upload your own or browse our vast collection.
+                A platform for readers and writers to discover, share, and discuss e-books on any topic. Upload your own or browse our vast collection with advanced copyright protection.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild size="lg" className="bg-secondary hover:bg-secondary-600 text-secondary-foreground">
@@ -82,6 +82,53 @@ const Index: React.FC = () => {
               <p className="text-gray-600">
                 Download e-books and create your personal digital library.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* New Features Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">New Features</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-gradient-to-br from-secondary/10 to-secondary/5 p-6 rounded-lg shadow-md text-center border border-secondary/20">
+              <div className="bg-secondary/20 p-3 rounded-full inline-flex items-center justify-center mb-4">
+                <BookOpen className="h-8 w-8 text-secondary-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Blog & Insights</h3>
+              <p className="text-gray-600 mb-4">
+                Stay updated with the latest trends in digital reading and publishing through our expert blog posts.
+              </p>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/blog">Explore Blog</Link>
+              </Button>
+            </div>
+            
+            <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-lg shadow-md text-center border border-primary/20">
+              <div className="bg-primary/20 p-3 rounded-full inline-flex items-center justify-center mb-4">
+                <MessageCircle className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">AI Chat Assistant</h3>
+              <p className="text-gray-600 mb-4">
+                Get instant help with book recommendations, platform guidance, and answers to your questions.
+              </p>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/chat">Start Chatting</Link>
+              </Button>
+            </div>
+            
+            <div className="bg-gradient-to-br from-green-100 to-green-50 p-6 rounded-lg shadow-md text-center border border-green-200">
+              <div className="bg-green-200 p-3 rounded-full inline-flex items-center justify-center mb-4">
+                <Shield className="h-8 w-8 text-green-700" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Copyright Protection</h3>
+              <p className="text-gray-600 mb-4">
+                Advanced DRM and copyright protection ensures authors' intellectual property is secure.
+              </p>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/blog/3">Learn More</Link>
+              </Button>
             </div>
           </div>
         </div>
