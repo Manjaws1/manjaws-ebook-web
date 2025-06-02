@@ -93,8 +93,7 @@ const Navbar: React.FC = () => {
           <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
             <NavLink to="/">Home</NavLink>
             <NavLink to="/browse">Browse eBooks</NavLink>
-            <NavLink to="/blog">Blog</NavLink>
-            <NavLink to="/chat">AI Chat</NavLink>
+            <NavLink to="/blog" requiresAuth={true}>Blog</NavLink>
             <NavLink to="/upload" requiresAuth={true}>Upload eBook</NavLink>
             <NavLink to="/library" requiresAuth={true}>My Library</NavLink>
             
@@ -145,8 +144,7 @@ const Navbar: React.FC = () => {
         <div className="flex flex-col px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <NavLink to="/" onClick={closeMenu}>Home</NavLink>
           <NavLink to="/browse" onClick={closeMenu}>Browse eBooks</NavLink>
-          <NavLink to="/blog" onClick={closeMenu}>Blog</NavLink>
-          <NavLink to="/chat" onClick={closeMenu}>AI Chat</NavLink>
+          <NavLink to="/blog" onClick={closeMenu} requiresAuth={true}>Blog</NavLink>
           <NavLink to="/upload" onClick={closeMenu} requiresAuth={true}>Upload eBook</NavLink>
           <NavLink to="/library" onClick={closeMenu} requiresAuth={true}>My Library</NavLink>
           
