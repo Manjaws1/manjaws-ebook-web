@@ -145,12 +145,18 @@ export const useAdminData = () => {
         
         if (error) throw error;
         
-        // Log admin action
+        // Log admin action with only serializable data
+        const logDetails = {
+          full_name: updates.full_name,
+          role: updates.role,
+          avatar_url: updates.avatar_url,
+        };
+        
         await supabase.rpc("log_admin_action", {
           action_type_param: "update",
           target_type_param: "profile",
           target_id_param: id,
-          details_param: updates,
+          details_param: logDetails,
         });
         
         return data;
@@ -206,12 +212,20 @@ export const useAdminData = () => {
         
         if (error) throw error;
         
-        // Log admin action
+        // Log admin action with only serializable data (exclude author object)
+        const logDetails = {
+          title: updates.title,
+          content: updates.content,
+          excerpt: updates.excerpt,
+          category: updates.category,
+          status: updates.status,
+        };
+        
         await supabase.rpc("log_admin_action", {
           action_type_param: "update",
           target_type_param: "blog",
           target_id_param: id,
-          details_param: updates,
+          details_param: logDetails,
         });
         
         return data;
@@ -267,12 +281,21 @@ export const useAdminData = () => {
         
         if (error) throw error;
         
-        // Log admin action
+        // Log admin action with only serializable data (exclude uploader object)
+        const logDetails = {
+          title: updates.title,
+          author: updates.author,
+          description: updates.description,
+          category: updates.category,
+          chapters: updates.chapters,
+          status: updates.status,
+        };
+        
         await supabase.rpc("log_admin_action", {
           action_type_param: "update",
           target_type_param: "ebook",
           target_id_param: id,
-          details_param: updates,
+          details_param: logDetails,
         });
         
         return data;
