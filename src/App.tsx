@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,8 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
+import AdminBlogs from "./pages/AdminBlogs";
+import AdminActions from "./pages/AdminActions";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,8 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/ebooks" element={<AdminEbooks />} />
+          <Route path="/admin/blogs" element={<AdminBlogs />} />
+          <Route path="/admin/actions" element={<AdminActions />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
