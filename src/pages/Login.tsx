@@ -1,10 +1,11 @@
 
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -14,6 +15,14 @@ const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { signIn, user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,15 +38,17 @@ const Login: React.FC = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    const { error } = await signIn(email, password);
+    
+    if (!error) {
       toast({
         title: "Success",
         description: "You have successfully logged in",
       });
-      setIsLoading(false);
-      // In a real app, redirect to dashboard or home page after successful login
-    }, 1500);
+      navigate('/');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -133,6 +144,18 @@ const Login: React.FC = () => {
               </Button>
             </div>
           </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Admin?{" "}
+              <Link
+                to="/admin/login"
+                className="font-medium text-primary hover:text-primary-700"
+              >
+                Admin Login
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
       

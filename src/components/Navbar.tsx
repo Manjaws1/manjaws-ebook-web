@@ -3,58 +3,11 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, UserCircle, LogIn, MessageCircle, BookOpen } from "lucide-react";
-import LoginPrompt from "./LoginPrompt";
-
-interface NavLinkProps {
-  to: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-  requiresAuth?: boolean;
-}
-
-const NavLink: React.FC<NavLinkProps> = ({ to, children, onClick, requiresAuth = false }) => {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // This would come from auth context in a real app
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (requiresAuth && !isLoggedIn) {
-      e.preventDefault();
-      setShowLoginPrompt(true);
-      if (onClick) onClick();
-      return;
-    }
-    if (onClick) onClick();
-  };
-
-  const handleLogin = () => {
-    setShowLoginPrompt(false);
-    navigate('/login');
-  };
-
-  return (
-    <>
-      <Link
-        to={to}
-        className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
-        onClick={handleClick}
-      >
-        {children}
-      </Link>
-      <LoginPrompt 
-        isOpen={showLoginPrompt}
-        onClose={() => setShowLoginPrompt(false)}
-        onLogin={handleLogin}
-      />
-    </>
-  );
-};
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // This would come from auth context in a real app
-  const [isAdmin, setIsAdmin] = useState(false); // This would come from auth context in a real app
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -65,17 +18,10 @@ const Navbar: React.FC = () => {
     setIsOpen(false);
   };
 
-  const handleProtectedRoute = (route: string) => {
-    if (!isLoggedIn) {
-      setShowLoginPrompt(true);
-      return;
-    }
-    navigate(route);
-  };
-
-  const handleLogin = () => {
-    setShowLoginPrompt(false);
-    navigate('/login');
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+    closeMenu();
   };
 
   return (
@@ -91,13 +37,27 @@ const Navbar: React.FC = () => {
           
           {/* Desktop navigation */}
           <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-            <NavLink to="/">Home</NavLink>
-            <NavLink to="/browse">Browse eBooks</NavLink>
-            <NavLink to="/blog" requiresAuth={true}>Blog</NavLink>
-            <NavLink to="/upload" requiresAuth={true}>Upload eBook</NavLink>
-            <NavLink to="/library" requiresAuth={true}>My Library</NavLink>
+            <Link to="/" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Home
+            </Link>
+            <Link to="/browse" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Browse eBooks
+            </Link>
+            {user && (
+              <>
+                <Link to="/blog" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Blog
+                </Link>
+                <Link to="/upload" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Upload eBook
+                </Link>
+                <Link to="/library" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  My Library
+                </Link>
+              </>
+            )}
             
-            {isLoggedIn ? (
+            {user ? (
               <>
                 <Button asChild variant="ghost" className="flex items-center gap-2">
                   <Link to="/profile">
@@ -110,6 +70,9 @@ const Navbar: React.FC = () => {
                     <Link to="/admin">Admin Dashboard</Link>
                   </Button>
                 )}
+                <Button variant="ghost" onClick={handleLogout} className="ml-2">
+                  Logout
+                </Button>
               </>
             ) : (
               <Button asChild className="bg-primary hover:bg-primary-700">
@@ -142,19 +105,38 @@ const Navbar: React.FC = () => {
       {/* Mobile menu */}
       <div className={`md:hidden ${isOpen ? "block" : "hidden"}`}>
         <div className="flex flex-col px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <NavLink to="/" onClick={closeMenu}>Home</NavLink>
-          <NavLink to="/browse" onClick={closeMenu}>Browse eBooks</NavLink>
-          <NavLink to="/blog" onClick={closeMenu} requiresAuth={true}>Blog</NavLink>
-          <NavLink to="/upload" onClick={closeMenu} requiresAuth={true}>Upload eBook</NavLink>
-          <NavLink to="/library" onClick={closeMenu} requiresAuth={true}>My Library</NavLink>
-          
-          {isLoggedIn ? (
+          <Link to="/" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Home
+          </Link>
+          <Link to="/browse" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Browse eBooks
+          </Link>
+          {user && (
             <>
-              <NavLink to="/profile" onClick={closeMenu}>Profile</NavLink>
+              <Link to="/blog" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                Blog
+              </Link>
+              <Link to="/upload" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                Upload eBook
+              </Link>
+              <Link to="/library" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                My Library
+              </Link>
+              <Link to="/profile" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                Profile
+              </Link>
               {isAdmin && (
-                <NavLink to="/admin" onClick={closeMenu}>Admin Dashboard</NavLink>
+                <Link to="/admin" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Admin Dashboard
+                </Link>
               )}
             </>
+          )}
+          
+          {user ? (
+            <Button variant="ghost" onClick={handleLogout} className="w-full mt-2 justify-start">
+              Logout
+            </Button>
           ) : (
             <Button asChild className="w-full mt-2 bg-primary hover:bg-primary-700">
               <Link to="/login" onClick={closeMenu} className="flex items-center justify-center gap-2">
@@ -165,12 +147,6 @@ const Navbar: React.FC = () => {
           )}
         </div>
       </div>
-
-      <LoginPrompt 
-        isOpen={showLoginPrompt}
-        onClose={() => setShowLoginPrompt(false)}
-        onLogin={handleLogin}
-      />
     </nav>
   );
 };

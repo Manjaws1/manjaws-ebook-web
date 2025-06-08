@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Users,
@@ -12,6 +12,7 @@ import {
   PenTool,
   Shield,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,13 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut, profile } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/admin/login');
+  };
 
   const navigationItems = [
     {
@@ -67,6 +75,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <span className="text-xl font-bold">Manjaws</span>
             <span className="text-secondary ml-1">Admin</span>
           </Link>
+          {profile && (
+            <div className="mt-2 text-sm text-gray-200">
+              Welcome, {profile.full_name || profile.email}
+            </div>
+          )}
         </div>
         
         <nav className="flex-grow p-4">
@@ -98,6 +111,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           <Button
             variant="ghost"
             className="w-full justify-start text-gray-200 hover:text-white hover:bg-primary-700"
+            onClick={handleLogout}
           >
             <LogOut className="mr-3 h-5 w-5" />
             <span>Logout</span>
