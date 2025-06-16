@@ -1,181 +1,90 @@
 
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import BookCard from "@/components/BookCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import EbookCard from "@/components/EbookCard";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search } from "lucide-react";
+import { useEbooks } from "@/hooks/useEbooks";
 
-// Dummy data for books
-const ALL_BOOKS = [
-  {
-    id: "book1",
-    title: "The Art of Programming",
-    author: "Jane Doe",
-    coverImage: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    chapters: 12,
-    category: "Programming",
-    isPreviewAvailable: true,
-  },
-  {
-    id: "book2",
-    title: "Data Structures and Algorithms",
-    author: "John Smith",
-    coverImage: "https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    chapters: 15,
-    category: "Programming",
-    isPreviewAvailable: true,
-  },
-  {
-    id: "book3",
-    title: "Web Development for Beginners",
-    author: "Sarah Johnson",
-    coverImage: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    chapters: 10,
-    category: "Web Development",
-    isPreviewAvailable: true,
-  },
-  {
-    id: "book4",
-    title: "Machine Learning Fundamentals",
-    author: "Michael Brown",
-    coverImage: "https://images.unsplash.com/photo-1599583863916-e06c29084354?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    chapters: 8,
-    category: "AI & Machine Learning",
-    isPreviewAvailable: true,
-  },
-  {
-    id: "book5",
-    title: "Cloud Computing Architecture",
-    author: "David Wilson",
-    coverImage: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    chapters: 10,
-    category: "Cloud Computing",
-    isPreviewAvailable: true,
-  },
-  {
-    id: "book6",
-    title: "Mobile App Development",
-    author: "Linda Martinez",
-    coverImage: "https://images.unsplash.com/photo-1492107376256-4026437926cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    chapters: 12,
-    category: "Mobile Development",
-    isPreviewAvailable: true,
-  },
-  {
-    id: "book7",
-    title: "Cybersecurity Essentials",
-    author: "Robert Taylor",
-    coverImage: "https://images.unsplash.com/photo-1470592406127-7d8d6d675ce7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    chapters: 9,
-    category: "Security",
-    isPreviewAvailable: true,
-  },
-  {
-    id: "book8",
-    title: "DevOps Practices",
-    author: "Emily Clark",
-    coverImage: "https://images.unsplash.com/photo-1546514355-7fdc90ccbd03?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    chapters: 7,
-    category: "DevOps",
-    isPreviewAvailable: true,
-  }
-];
-
-// Categories for filtering
-const CATEGORIES = [
-  "All Categories",
-  "Programming",
-  "Web Development",
-  "AI & Machine Learning",
-  "Cloud Computing",
-  "Mobile Development",
-  "Security",
-  "DevOps"
-];
-
-const Browse: React.FC = () => {
+const Browse = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Filter books based on search term and category
-  const filteredBooks = ALL_BOOKS.filter((book) => {
-    const matchesSearch =
-      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory =
-      selectedCategory === "All Categories" || book.category === selectedCategory;
-    
+  const { useGetEbooks, useGetCategories } = useEbooks();
+  const { data: ebooks = [], isLoading } = useGetEbooks("approved");
+  const { data: categories = [] } = useGetCategories();
+
+  const filteredEbooks = ebooks.filter(ebook => {
+    const matchesSearch = ebook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         ebook.author.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || ebook.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
-      <div className="bg-gray-50 py-8 px-4">
-        <div className="container mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Browse E-Books</h1>
-          
-          {/* Search and filters */}
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <div className="flex-grow relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <Input
-                  type="text"
-                  placeholder="Search by title or author..."
-                  className="pl-10"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              
-              <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
-                {CATEGORIES.map((category) => (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    className={selectedCategory === category ? "bg-primary" : ""}
-                    onClick={() => setSelectedCategory(category)}
-                    size="sm"
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-4">Browse eBooks</h1>
+          <p className="text-lg text-muted-foreground mb-6">
+            Discover and download free eBooks from our community
+          </p>
+
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search by title or author..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.name}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          
-          {/* Books grid */}
-          {filteredBooks.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {filteredBooks.map((book) => (
-                <BookCard
-                  key={book.id}
-                  id={book.id}
-                  title={book.title}
-                  author={book.author}
-                  coverImage={book.coverImage}
-                  chapters={book.chapters}
-                  isPreviewAvailable={book.isPreviewAvailable}
-                />
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Loading eBooks...</p>
+          </div>
+        ) : (
+          <>
+            <div className="mb-4 text-sm text-muted-foreground">
+              {filteredEbooks.length} eBook{filteredEbooks.length !== 1 ? 's' : ''} found
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredEbooks.map((ebook) => (
+                <EbookCard key={ebook.id} ebook={ebook} />
               ))}
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-700">No books found</h3>
-              <p className="text-gray-500 mt-2">Try adjusting your search or filters</p>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      <div className="mt-auto">
-        <Footer />
-      </div>
+
+            {filteredEbooks.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No eBooks found matching your criteria.</p>
+              </div>
+            )}
+          </>
+        )}
+      </main>
+      <Footer />
     </div>
   );
 };

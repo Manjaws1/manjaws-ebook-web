@@ -94,6 +94,30 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ebooks: {
         Row: {
           author: string
@@ -103,8 +127,10 @@ export type Database = {
           created_at: string
           description: string | null
           downloads: number | null
+          file_size: number | null
           file_url: string | null
           id: string
+          is_featured: boolean | null
           status: string | null
           title: string
           updated_at: string
@@ -112,14 +138,16 @@ export type Database = {
         }
         Insert: {
           author: string
-          category: string
+          category?: string
           chapters?: number | null
           cover_image?: string | null
           created_at?: string
           description?: string | null
           downloads?: number | null
+          file_size?: number | null
           file_url?: string | null
           id?: string
+          is_featured?: boolean | null
           status?: string | null
           title: string
           updated_at?: string
@@ -133,8 +161,10 @@ export type Database = {
           created_at?: string
           description?: string | null
           downloads?: number | null
+          file_size?: number | null
           file_url?: string | null
           id?: string
+          is_featured?: boolean | null
           status?: string | null
           title?: string
           updated_at?: string
@@ -180,11 +210,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_downloads: {
+        Row: {
+          downloaded_at: string
+          ebook_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          downloaded_at?: string
+          ebook_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          downloaded_at?: string
+          ebook_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_downloads_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_downloads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      increment_download_count: {
+        Args: { ebook_uuid: string; user_uuid: string }
+        Returns: undefined
+      }
       log_admin_action: {
         Args: {
           action_type_param: string
