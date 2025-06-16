@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import EbookCard from "@/components/EbookCard";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
 import { useEbooks } from "@/hooks/useEbooks";
 
@@ -57,6 +58,27 @@ const Browse = () => {
               </SelectContent>
             </Select>
           </div>
+
+          {/* Category filter buttons */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Badge
+              variant={selectedCategory === "all" ? "default" : "outline"}
+              className="cursor-pointer"
+              onClick={() => setSelectedCategory("all")}
+            >
+              All Categories
+            </Badge>
+            {categories.map((category) => (
+              <Badge
+                key={category.id}
+                variant={selectedCategory === category.name ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => setSelectedCategory(category.name)}
+              >
+                {category.name}
+              </Badge>
+            ))}
+          </div>
         </div>
 
         {isLoading ? (
@@ -68,6 +90,7 @@ const Browse = () => {
           <>
             <div className="mb-4 text-sm text-muted-foreground">
               {filteredEbooks.length} eBook{filteredEbooks.length !== 1 ? 's' : ''} found
+              {selectedCategory !== "all" && ` in ${selectedCategory}`}
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

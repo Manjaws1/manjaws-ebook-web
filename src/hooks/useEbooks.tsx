@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +29,8 @@ export interface Category {
   id: string;
   name: string;
   description: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export const useEbooks = () => {
@@ -74,20 +75,121 @@ export const useEbooks = () => {
     });
   };
 
+  const useCreateCategory = () => {
+    return useMutation({
+      mutationFn: async ({
+        name,
+        description,
+      }: {
+        name: string;
+        description?: string;
+      }) => {
+        const { data, error } = await supabase
+          .from("categories")
+          .insert({
+            name,
+            description,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["categories"] });
+        toast({
+          title: "Success",
+          description: "Category created successfully",
+        });
+      },
+      onError: (error: any) => {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+  };
+
+  const useUpdateCategory = () => {
+    return useMutation({
+      mutationFn: async ({ 
+        id, 
+        updates 
+      }: { 
+        id: string; 
+        updates: Partial<Category> 
+      }) => {
+        const { data, error } = await supabase
+          .from("categories")
+          .update(updates)
+          .eq("id", id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["categories"] });
+        toast({
+          title: "Success",
+          description: "Category updated successfully",
+        });
+      },
+      onError: (error: any) => {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+  };
+
+  const useDeleteCategory = () => {
+    return useMutation({
+      mutationFn: async (id: string) => {
+        const { error } = await supabase
+          .from("categories")
+          .delete()
+          .eq("id", id);
+
+        if (error) throw error;
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["categories"] });
+        toast({
+          title: "Success",
+          description: "Category deleted successfully",
+        });
+      },
+      onError: (error: any) => {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+  };
+
   const useUploadEbook = () => {
     return useMutation({
       mutationFn: async ({
         title,
         author,
         description,
-        category,
+        categories,
         file,
         coverImage,
       }: {
         title: string;
         author: string;
         description?: string;
-        category: string;
+        categories: string[];
         file: File;
         coverImage?: File;
       }) => {
@@ -118,14 +220,14 @@ export const useEbooks = () => {
           coverImagePath = `https://jhrecjjibycsyzgmfnvp.supabase.co/storage/v1/object/public/covers/${coverFileName}`;
         }
 
-        // Create ebook record
+        // Create ebook record with first category as main category
         const { data, error } = await supabase
           .from("ebooks")
           .insert({
             title,
             author,
             description,
-            category,
+            category: categories[0], // Use first category as main category
             uploaded_by: user.id,
             file_url: `https://jhrecjjibycsyzgmfnvp.supabase.co/storage/v1/object/public/ebooks/${fileName}`,
             cover_image: coverImagePath,
@@ -238,6 +340,9 @@ export const useEbooks = () => {
   return {
     useGetEbooks,
     useGetCategories,
+    useCreateCategory,
+    useUpdateCategory,
+    useDeleteCategory,
     useUploadEbook,
     useUpdateEbook,
     useDeleteEbook,

@@ -4,27 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, FileText, Image } from "lucide-react";
 import { useEbooks } from "@/hooks/useEbooks";
+import CategorySelect from "./CategorySelect";
 
 const UploadForm = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState<string[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
 
-  const { useGetCategories, useUploadEbook } = useEbooks();
-  const { data: categories = [] } = useGetCategories();
+  const { useUploadEbook } = useEbooks();
   const uploadMutation = useUploadEbook();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !author || !category || !file) {
+    if (!title || !author || categories.length === 0 || !file) {
       return;
     }
 
@@ -32,7 +31,7 @@ const UploadForm = () => {
       title,
       author,
       description,
-      category,
+      categories,
       file,
       coverImage: coverImage || undefined,
     }, {
@@ -40,7 +39,7 @@ const UploadForm = () => {
         setTitle("");
         setAuthor("");
         setDescription("");
-        setCategory("");
+        setCategories([]);
         setFile(null);
         setCoverImage(null);
       },
@@ -83,21 +82,11 @@ const UploadForm = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="category">Category *</Label>
-            <Select value={category} onValueChange={setCategory} required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.name}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <CategorySelect
+            selectedCategories={categories}
+            onCategoriesChange={setCategories}
+            required
+          />
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
