@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -59,6 +58,13 @@ const Register: React.FC = () => {
     setIsLoading(true);
     
     const { error } = await signUp(email, password, name);
+    
+    if (!error) {
+      // Redirect to login page after successful signup
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    }
     
     setIsLoading(false);
   };

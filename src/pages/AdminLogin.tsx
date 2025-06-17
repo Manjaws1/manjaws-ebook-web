@@ -11,7 +11,7 @@ const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, user, isAdmin, loading } = useAuth();
+  const { signIn, user, isAdmin, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,8 +32,8 @@ const AdminLogin: React.FC = () => {
     const { error } = await signIn(email, password);
     
     if (!error) {
-      // Check if user is admin after successful login
-      // The useEffect above will handle the redirect
+      // Refresh profile to get latest role information
+      await refreshProfile();
     }
     
     setIsLoading(false);
@@ -109,12 +109,6 @@ const AdminLogin: React.FC = () => {
               )}
             </Button>
           </form>
-          
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Demo Admin Account:</p>
-            <p className="font-mono text-xs">gbenlekamolideen@gmail.com</p>
-            <p className="font-mono text-xs">Password: 12345678</p>
-          </div>
         </CardContent>
       </Card>
     </div>
