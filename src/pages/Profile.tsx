@@ -58,7 +58,7 @@ const Profile = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
-                    <AvatarImage src={profile?.avatar_url} alt={profile?.full_name || user.email} />
+                    <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || user.email} />
                     <AvatarFallback className="bg-secondary text-secondary-foreground text-xl font-semibold">
                       {profile?.full_name ? getInitials(profile.full_name) : user.email[0].toUpperCase()}
                     </AvatarFallback>
