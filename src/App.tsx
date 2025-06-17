@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import Register from "./pages/Register";
 import Browse from "./pages/Browse";
 import Upload from "./pages/Upload";
 import Library from "./pages/Library";
+import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminEbooks from "./pages/AdminEbooks";
@@ -42,6 +42,7 @@ const App = () => (
             <Route path="/browse" element={<Browse />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/library" element={<Library />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/chat" element={<Chat />} />
