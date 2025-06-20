@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +19,7 @@ import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminEbooks from "./pages/AdminEbooks";
+import AdminManageAdmins from "./pages/AdminManageAdmins";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Chat from "./pages/Chat";
@@ -60,6 +62,11 @@ const App = () => (
             <Route path="/admin/ebooks" element={
               <ProtectedRoute requireAdmin={true}>
                 <AdminEbooks />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/manage-admins" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminManageAdmins />
               </ProtectedRoute>
             } />
             <Route path="/admin/blogs" element={
