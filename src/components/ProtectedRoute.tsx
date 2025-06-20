@@ -24,7 +24,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
   }
 
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/admin/login" replace />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-4">You don't have admin privileges to access this page.</p>
+          <Navigate to="/admin/login" replace />
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;

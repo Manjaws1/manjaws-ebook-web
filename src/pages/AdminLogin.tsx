@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { Shield, LogIn } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -13,30 +14,62 @@ const AdminLogin: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, user, isAdmin, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
+    console.log('AdminLogin - user:', user, 'isAdmin:', isAdmin, 'loading:', loading);
+    
     if (!loading && user && isAdmin) {
+      console.log('Redirecting to admin dashboard');
       navigate('/admin');
+    } else if (!loading && user && !isAdmin) {
+      toast({
+        title: "Access Denied",
+        description: "You don't have admin privileges.",
+        variant: "destructive",
+      });
     }
-  }, [user, isAdmin, loading, navigate]);
+  }, [user, isAdmin, loading, navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter both email and password.",
+        variant: "destructive",
+      });
       return;
     }
     
     setIsLoading(true);
     
-    const { error } = await signIn(email, password);
-    
-    if (!error) {
-      // Refresh profile to get latest role information
-      await refreshProfile();
+    try {
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        console.error('Login error:', error);
+        toast({
+          title: "Login Failed",
+          description: error.message || "Invalid email or password.",
+          variant: "destructive",
+        });
+      } else {
+        // Refresh profile to get latest role information
+        await refreshProfile();
+        console.log('Login successful, refreshing profile...');
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   if (loading) {
@@ -45,6 +78,21 @@ const AdminLogin: React.FC = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is logged in but not admin, show access denied
+  if (user && !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-4">You don't have admin privileges to access this page.</p>
+          <Button onClick={() => navigate('/')} variant="outline">
+            Go to Home
+          </Button>
         </div>
       </div>
     );
@@ -74,6 +122,7 @@ const AdminLogin: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your admin email"
                 required
+                disabled={isLoading}
               />
             </div>
             
@@ -88,6 +137,7 @@ const AdminLogin: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
+                disabled={isLoading}
               />
             </div>
             
