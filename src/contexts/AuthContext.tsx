@@ -58,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -77,16 +78,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      console.log('Fetching profile for user:', userId);
+      
+      // Use the security definer function to safely check admin status
+      const { data: adminCheck, error: adminError } = await supabase
+        .rpc('is_user_admin', { user_id: userId });
+      
+      if (adminError) {
+        console.error('Error checking admin status:', adminError);
+        // If admin check fails, try to get basic profile
+        const { data: basicProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
+        
+        if (basicProfile) {
+          setProfile(basicProfile);
+        }
+      } else {
+        // Get profile data
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
 
-      if (error) throw error;
-      setProfile(data);
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          // Create a basic profile if it doesn't exist
+          const { data: userData } = await supabase.auth.getUser();
+          if (userData.user) {
+            const basicProfile: Profile = {
+              id: userData.user.id,
+              email: userData.user.email!,
+              full_name: userData.user.user_metadata?.full_name || null,
+              avatar_url: null,
+              role: adminCheck ? 'admin' : 'user',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            };
+            setProfile(basicProfile);
+          }
+        } else {
+          // Update role based on admin check
+          const updatedProfile = {
+            ...profileData,
+            role: adminCheck ? 'admin' : profileData.role
+          };
+          setProfile(updatedProfile);
+        }
+      }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Error in fetchProfile:', error);
     } finally {
       setLoading(false);
     }
@@ -147,6 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
   };
 
+  // Check if user is admin based on profile role or direct admin check
   const isAdmin = profile?.role === 'admin';
 
   const value = {
