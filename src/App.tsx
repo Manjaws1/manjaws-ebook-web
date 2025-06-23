@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminEbooks from "./pages/AdminEbooks";
 import AdminManageAdmins from "./pages/AdminManageAdmins";
+import AdminCategories from "./pages/AdminCategories";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Chat from "./pages/Chat";
@@ -62,6 +63,11 @@ const App = () => (
             <Route path="/admin/ebooks" element={
               <ProtectedRoute requireAdmin={true}>
                 <AdminEbooks />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/categories" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminCategories />
               </ProtectedRoute>
             } />
             <Route path="/admin/manage-admins" element={
