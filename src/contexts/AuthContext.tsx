@@ -80,20 +80,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('Fetching profile for user:', userId);
       
-      // First check if user is in admin_users table
-      const { data: adminUsers, error: adminError } = await supabase
-        .from('admin_users')
-        .select('email, is_active')
-        .eq('is_active', true);
+      // Use the security definer function to safely check admin status
+      const { data: adminCheck, error: adminError } = await supabase
+        .rpc('is_user_admin', { user_id: userId });
       
-      // Get user email
-      const { data: userData } = await supabase.auth.getUser();
-      const userEmail = userData.user?.email;
-      
-      // Check if user is admin
-      const isUserAdmin = adminUsers?.some(admin => admin.email === userEmail) || false;
-      
-      if (adminError && adminError.code !== 'PGRST116') {
+      if (adminError) {
         console.error('Error checking admin status:', adminError);
       }
       
@@ -107,13 +98,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (profileError && profileError.code !== 'PGRST116') {
         console.error('Error fetching profile:', profileError);
         // Create a basic profile if it doesn't exist
+        const { data: userData } = await supabase.auth.getUser();
         if (userData.user) {
           const basicProfile: Profile = {
             id: userData.user.id,
             email: userData.user.email!,
             full_name: userData.user.user_metadata?.full_name || null,
             avatar_url: null,
-            role: isUserAdmin ? 'admin' : 'user',
+            role: adminCheck ? 'admin' : 'user',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           };
@@ -123,7 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Update role based on admin check
         const updatedProfile = {
           ...profileData,
-          role: isUserAdmin ? 'admin' : profileData.role
+          role: adminCheck ? 'admin' : profileData.role
         };
         setProfile(updatedProfile);
       }

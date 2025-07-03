@@ -289,9 +289,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       increment_download_count: {
         Args: { ebook_uuid: string; user_uuid: string }
         Returns: undefined
+      }
+      is_user_admin: {
+        Args: { user_id: string }
+        Returns: boolean
       }
       log_admin_action: {
         Args: {
