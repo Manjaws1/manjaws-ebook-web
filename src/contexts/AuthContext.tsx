@@ -76,6 +76,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  // Real-time subscriptions for profile and admin status changes
+  useEffect(() => {
+    if (!user?.id) return;
+
+    // Listen for profile changes
+    const profileChannel = supabase
+      .channel('profile-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`,
+        },
+        (payload) => {
+          console.log('Profile updated:', payload);
+          if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
+            setProfile(payload.new as Profile);
+          }
+        }
+      )
+      .subscribe();
+
+    // Listen for admin_users changes that might affect current user
+    const adminChannel = supabase
+      .channel('admin-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'admin_users',
+          filter: `email=eq.${user.email}`,
+        },
+        (payload) => {
+          console.log('Admin status changed:', payload);
+          // Refresh profile to update admin status
+          setTimeout(() => {
+            fetchProfile(user.id);
+          }, 0);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(profileChannel);
+      supabase.removeChannel(adminChannel);
+    };
+  }, [user?.id, user?.email]);
+
   const fetchProfile = async (userId: string) => {
     try {
       console.log('Fetching profile for user:', userId);

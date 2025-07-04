@@ -1,4 +1,5 @@
 
+import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -61,7 +62,7 @@ export const useAdminData = () => {
 
   // Users/Profiles queries
   const useProfiles = () => {
-    return useQuery({
+    const query = useQuery({
       queryKey: ["admin-profiles"],
       queryFn: async () => {
         const { data, error } = await supabase
@@ -73,11 +74,35 @@ export const useAdminData = () => {
         return data as Profile[];
       },
     });
+
+    // Real-time subscription for profiles
+    React.useEffect(() => {
+      const channel = supabase
+        .channel('admin-profiles-realtime')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'profiles',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, []);
+
+    return query;
   };
 
   // Blogs queries
   const useBlogs = () => {
-    return useQuery({
+    const query = useQuery({
       queryKey: ["admin-blogs"],
       queryFn: async () => {
         const { data, error } = await supabase
@@ -92,11 +117,35 @@ export const useAdminData = () => {
         return data as Blog[];
       },
     });
+
+    // Real-time subscription for blogs
+    React.useEffect(() => {
+      const channel = supabase
+        .channel('admin-blogs-realtime')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'blogs',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, []);
+
+    return query;
   };
 
   // Ebooks queries
   const useEbooks = () => {
-    return useQuery({
+    const query = useQuery({
       queryKey: ["admin-ebooks"],
       queryFn: async () => {
         const { data, error } = await supabase
@@ -111,11 +160,35 @@ export const useAdminData = () => {
         return data as Ebook[];
       },
     });
+
+    // Real-time subscription for ebooks
+    React.useEffect(() => {
+      const channel = supabase
+        .channel('admin-ebooks-realtime')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'ebooks',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ["admin-ebooks"] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, []);
+
+    return query;
   };
 
   // Admin Actions queries
   const useAdminActions = () => {
-    return useQuery({
+    const query = useQuery({
       queryKey: ["admin-actions"],
       queryFn: async () => {
         const { data, error } = await supabase
@@ -130,6 +203,30 @@ export const useAdminData = () => {
         return data as AdminAction[];
       },
     });
+
+    // Real-time subscription for admin actions
+    React.useEffect(() => {
+      const channel = supabase
+        .channel('admin-actions-realtime')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'admin_actions',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ["admin-actions"] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, []);
+
+    return query;
   };
 
   // Mutations

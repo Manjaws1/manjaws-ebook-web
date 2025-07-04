@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -38,7 +39,7 @@ export const useEbooks = () => {
   const queryClient = useQueryClient();
 
   const useGetEbooks = (status?: string) => {
-    return useQuery({
+    const query = useQuery({
       queryKey: ["ebooks", status],
       queryFn: async () => {
         let query = supabase
@@ -58,10 +59,34 @@ export const useEbooks = () => {
         return data as Ebook[];
       },
     });
+
+    // Real-time subscription for ebooks
+    React.useEffect(() => {
+      const channel = supabase
+        .channel('ebooks-realtime')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'ebooks',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ["ebooks"] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, []);
+
+    return query;
   };
 
   const useGetCategories = () => {
-    return useQuery({
+    const query = useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
         const { data, error } = await supabase
@@ -73,6 +98,30 @@ export const useEbooks = () => {
         return data as Category[];
       },
     });
+
+    // Real-time subscription for categories
+    React.useEffect(() => {
+      const channel = supabase
+        .channel('categories-realtime')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'categories',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, []);
+
+    return query;
   };
 
   const useCreateCategory = () => {
