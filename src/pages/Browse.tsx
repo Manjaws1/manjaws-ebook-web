@@ -17,6 +17,8 @@ const Browse = () => {
   const { data: ebooks = [], isLoading } = useGetEbooks("approved");
   const { data: categories = [], isLoading: categoriesLoading } = useGetCategories();
 
+  console.log("Browse - categories:", categories, "loading:", categoriesLoading);
+
   const filteredEbooks = ebooks.filter(ebook => {
     const matchesSearch = ebook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          ebook.author.toLowerCase().includes(searchTerm.toLowerCase());
@@ -50,11 +52,15 @@ const Browse = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {categories?.map((category) => (
-                  <SelectItem key={category.id} value={category.name}>
-                    {category.name}
-                  </SelectItem>
-                ))}
+                {categoriesLoading ? (
+                  <SelectItem value="" disabled>Loading categories...</SelectItem>
+                ) : (
+                  categories?.map((category) => (
+                    <SelectItem key={category.id} value={category.name}>
+                      {category.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -68,16 +74,20 @@ const Browse = () => {
             >
               All Categories
             </Badge>
-            {categories?.map((category) => (
-              <Badge
-                key={category.id}
-                variant={selectedCategory === category.name ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => setSelectedCategory(category.name)}
-              >
-                {category.name}
-              </Badge>
-            ))}
+            {categoriesLoading ? (
+              <Badge variant="outline" className="animate-pulse">Loading...</Badge>
+            ) : (
+              categories?.map((category) => (
+                <Badge
+                  key={category.id}
+                  variant={selectedCategory === category.name ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => setSelectedCategory(category.name)}
+                >
+                  {category.name}
+                </Badge>
+              ))
+            )}
           </div>
         </div>
 

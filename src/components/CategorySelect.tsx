@@ -24,6 +24,8 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
   const { useGetCategories } = useEbooks();
   const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useGetCategories();
 
+  console.log("CategorySelect - categories:", categories, "loading:", categoriesLoading, "error:", categoriesError);
+
   const handleCategoryToggle = (categoryName: string) => {
     if (selectedCategories.includes(categoryName)) {
       onCategoriesChange(selectedCategories.filter(cat => cat !== categoryName));
@@ -65,6 +67,10 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
             <CommandGroup>
               {categoriesLoading ? (
                 <div className="p-2 text-sm text-muted-foreground">Loading categories...</div>
+              ) : categoriesError ? (
+                <div className="p-2 text-sm text-destructive">Failed to load categories. Please try again.</div>
+              ) : !categories || categories.length === 0 ? (
+                <div className="p-2 text-sm text-muted-foreground">No categories available.</div>
               ) : (
                 categories?.map((category) => (
                 <CommandItem
@@ -79,7 +85,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
                   />
                   {category.name}
                 </CommandItem>
-                )) || null
+                ))
               )}
             </CommandGroup>
           </Command>

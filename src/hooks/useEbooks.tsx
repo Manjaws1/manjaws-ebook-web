@@ -89,14 +89,22 @@ export const useEbooks = () => {
     const query = useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
+        console.log("Fetching categories...");
         const { data, error } = await supabase
           .from("categories")
           .select("*")
           .order("name");
         
-        if (error) throw error;
+        if (error) {
+          console.error("Error fetching categories:", error);
+          throw error;
+        }
+        
+        console.log("Categories fetched successfully:", data);
         return data as Category[];
       },
+      retry: 2,
+      retryDelay: 1000,
     });
 
     // Real-time subscription for categories
