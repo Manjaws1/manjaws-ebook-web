@@ -15,7 +15,7 @@ const Browse = () => {
 
   const { useGetEbooks, useGetCategories } = useEbooks();
   const { data: ebooks = [], isLoading } = useGetEbooks("approved");
-  const { data: categories = [] } = useGetCategories();
+  const { data: categories = [], isLoading: categoriesLoading } = useGetCategories();
 
   const filteredEbooks = ebooks.filter(ebook => {
     const matchesSearch = ebook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -50,7 +50,7 @@ const Browse = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((category) => (
+                {categories?.map((category) => (
                   <SelectItem key={category.id} value={category.name}>
                     {category.name}
                   </SelectItem>
@@ -68,7 +68,7 @@ const Browse = () => {
             >
               All Categories
             </Badge>
-            {categories.map((category) => (
+            {categories?.map((category) => (
               <Badge
                 key={category.id}
                 variant={selectedCategory === category.name ? "default" : "outline"}

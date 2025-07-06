@@ -22,7 +22,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const { useGetCategories } = useEbooks();
-  const { data: categories = [] } = useGetCategories();
+  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useGetCategories();
 
   const handleCategoryToggle = (categoryName: string) => {
     if (selectedCategories.includes(categoryName)) {
@@ -59,9 +59,14 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
         <PopoverContent className="w-full p-0">
           <Command>
             <CommandInput placeholder="Search categories..." />
-            <CommandEmpty>No categories found.</CommandEmpty>
+            <CommandEmpty>
+              {categoriesError ? "Error loading categories" : "No categories found."}
+            </CommandEmpty>
             <CommandGroup>
-              {categories.map((category) => (
+              {categoriesLoading ? (
+                <div className="p-2 text-sm text-muted-foreground">Loading categories...</div>
+              ) : (
+                categories?.map((category) => (
                 <CommandItem
                   key={category.id}
                   onSelect={() => handleCategoryToggle(category.name)}
@@ -74,7 +79,8 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
                   />
                   {category.name}
                 </CommandItem>
-              ))}
+                )) || null
+              )}
             </CommandGroup>
           </Command>
         </PopoverContent>

@@ -6,7 +6,8 @@ import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminBulkActions from "@/components/admin/AdminBulkActions";
 import AdminPresence from "@/components/admin/AdminPresence";
-import { BarChart, Bell, Users, Zap, Activity } from "lucide-react";
+import CategoryManagement from "@/components/admin/CategoryManagement";
+import { BarChart, Bell, Users, Zap, Activity, Tags } from "lucide-react";
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -22,7 +23,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart className="h-4 w-4" />
               Analytics
@@ -42,6 +43,10 @@ const AdminDashboard: React.FC = () => {
             <TabsTrigger value="activity" className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
               Live Activity
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="flex items-center gap-2">
+              <Tags className="h-4 w-4" />
+              Categories
             </TabsTrigger>
           </TabsList>
 
@@ -71,6 +76,10 @@ const AdminDashboard: React.FC = () => {
                 Real-time activity monitoring coming soon...
               </p>
             </div>
+          </TabsContent>
+
+          <TabsContent value="categories" className="space-y-6">
+            <CategoryManagement />
           </TabsContent>
         </Tabs>
       </div>
