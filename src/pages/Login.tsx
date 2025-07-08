@@ -15,14 +15,19 @@ const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { signIn, user } = useAuth();
+  const { signIn, user, isAdmin, profile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      navigate('/');
+    if (user && profile) {
+      // Redirect based on user role
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     }
-  }, [user, navigate]);
+  }, [user, profile, isAdmin, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +50,7 @@ const Login: React.FC = () => {
         title: "Success",
         description: "You have successfully logged in",
       });
-      navigate('/');
+      // Navigation will be handled by useEffect based on role
     }
     
     setIsLoading(false);
@@ -145,17 +150,6 @@ const Login: React.FC = () => {
             </div>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Admin?{" "}
-              <Link
-                to="/admin/login"
-                className="font-medium text-primary hover:text-primary-700"
-              >
-                Admin Login
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
       

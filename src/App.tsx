@@ -27,7 +27,7 @@ import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 import AdminBlogs from "./pages/AdminBlogs";
 import AdminActions from "./pages/AdminActions";
-import AdminLogin from "./pages/AdminLogin";
+
 
 const queryClient = new QueryClient();
 
@@ -49,7 +49,7 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
+            
             <Route path="/admin" element={
               <ProtectedRoute requireAdmin={true}>
                 <AdminDashboard />
