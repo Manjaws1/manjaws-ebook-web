@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown, X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEbooks } from "@/hooks/useEbooks";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CategorySelectProps {
   selectedCategories: string[];
@@ -38,6 +40,46 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
     onCategoriesChange(selectedCategories.filter(cat => cat !== categoryName));
   };
 
+  // Show loading skeleton while categories are being fetched
+  if (categoriesLoading) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="categories">
+          Categories {required && "*"}
+        </Label>
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
+
+  // Show error state if categories failed to load
+  if (categoriesError) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="categories">
+          Categories {required && "*"}
+        </Label>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Failed to load categories. Please refresh the page and try again.
+          </AlertDescription>
+        </Alert>
+        <Button
+          variant="outline"
+          className="w-full justify-between"
+          disabled
+        >
+          Select categories...
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </div>
+    );
+  }
+
+  // Ensure categories is a valid array before rendering Command component
+  const validCategories = Array.isArray(categories) ? categories : [];
+
   return (
     <div className="space-y-2">
       <Label htmlFor="categories">
@@ -59,36 +101,32 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
-          <Command>
-            <CommandInput placeholder="Search categories..." />
-            <CommandEmpty>
-              {categoriesError ? "Error loading categories" : "No categories found."}
-            </CommandEmpty>
-            <CommandGroup>
-              {categoriesLoading ? (
-                <div className="p-2 text-sm text-muted-foreground">Loading categories...</div>
-              ) : categoriesError ? (
-                <div className="p-2 text-sm text-destructive">Failed to load categories. Please try again.</div>
-              ) : !categories || categories.length === 0 ? (
-                <div className="p-2 text-sm text-muted-foreground">No categories available.</div>
-              ) : (
-                categories?.map((category) => (
-                <CommandItem
-                  key={category.id}
-                  onSelect={() => handleCategoryToggle(category.name)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedCategories.includes(category.name) ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {category.name}
-                </CommandItem>
-                ))
-              )}
-            </CommandGroup>
-          </Command>
+          {validCategories.length > 0 ? (
+            <Command>
+              <CommandInput placeholder="Search categories..." />
+              <CommandEmpty>No categories found.</CommandEmpty>
+              <CommandGroup>
+                {validCategories.map((category) => (
+                  <CommandItem
+                    key={category.id}
+                    onSelect={() => handleCategoryToggle(category.name)}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        selectedCategories.includes(category.name) ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {category.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </Command>
+          ) : (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              No categories available. Please contact an administrator to add categories.
+            </div>
+          )}
         </PopoverContent>
       </Popover>
 
