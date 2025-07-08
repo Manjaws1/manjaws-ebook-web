@@ -11,6 +11,7 @@ import {
   LogOut,
   PenTool,
   Shield,
+  ArrowLeft,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -107,7 +108,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </ul>
         </nav>
         
-        <div className="p-4 border-t border-primary-800">
+        <div className="p-4 border-t border-primary-800 space-y-2">
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-gray-200 hover:text-white hover:bg-primary-700"
+            onClick={() => navigate('/profile')}
+          >
+            <ArrowLeft className="mr-3 h-5 w-5" />
+            <span>Back to User Dashboard</span>
+          </Button>
           <Button
             variant="ghost"
             className="w-full justify-start text-gray-200 hover:text-white hover:bg-primary-700"
