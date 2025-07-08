@@ -19,6 +19,7 @@ export interface Ebook {
   is_featured: boolean;
   created_at: string;
   updated_at: string;
+  categories?: Category[];
   uploader?: {
     id: string;
     full_name: string | null;
@@ -46,7 +47,10 @@ export const useEbooks = () => {
           .from("ebooks")
           .select(`
             *,
-            uploader:profiles(id, full_name, email)
+            uploader:profiles(id, full_name, email),
+            ebook_categories(
+              categories(id, name, description)
+            )
           `)
           .order("created_at", { ascending: false });
 
@@ -56,7 +60,14 @@ export const useEbooks = () => {
 
         const { data, error } = await query;
         if (error) throw error;
-        return data as Ebook[];
+
+        // Transform the data to include categories array
+        const transformedData = data?.map(ebook => ({
+          ...ebook,
+          categories: ebook.ebook_categories?.map((ec: any) => ec.categories) || []
+        })) || [];
+
+        return transformedData as Ebook[];
       },
     });
 
@@ -278,7 +289,7 @@ export const useEbooks = () => {
         }
 
         // Create ebook record with first category as main category
-        const { data, error } = await supabase
+        const { data: ebook, error: ebookError } = await supabase
           .from("ebooks")
           .insert({
             title,
@@ -293,8 +304,31 @@ export const useEbooks = () => {
           .select()
           .single();
 
-        if (error) throw error;
-        return data;
+        if (ebookError) throw ebookError;
+
+        // Get category IDs for the selected category names
+        const { data: categoryData, error: categoryError } = await supabase
+          .from("categories")
+          .select("id, name")
+          .in("name", categories);
+
+        if (categoryError) throw categoryError;
+
+        // Create ebook-category relationships
+        if (categoryData && categoryData.length > 0) {
+          const ebookCategories = categoryData.map(category => ({
+            ebook_id: ebook.id,
+            category_id: category.id,
+          }));
+
+          const { error: relationError } = await supabase
+            .from("ebook_categories")
+            .insert(ebookCategories);
+
+          if (relationError) throw relationError;
+        }
+
+        return ebook;
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["ebooks"] });
