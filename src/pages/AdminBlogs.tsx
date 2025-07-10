@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Plus,
   Edit,
@@ -56,6 +57,7 @@ const AdminBlogs: React.FC = () => {
     author_id: "",
     featured_image: null,
   });
+  const [uploading, setUploading] = useState(false);
 
   const filteredBlogs = blogs.filter(
     (blog) =>
@@ -101,6 +103,38 @@ const AdminBlogs: React.FC = () => {
   const handleDeleteBlog = (blogId: string) => {
     if (confirm("Are you sure you want to delete this blog?")) {
       deleteBlogMutation.mutate(blogId);
+    }
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, isEdit = false) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `blog-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('covers')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('covers')
+        .getPublicUrl(filePath);
+
+      if (isEdit && editingBlog) {
+        setEditingBlog({ ...editingBlog, featured_image: data.publicUrl });
+      } else {
+        setNewBlog({ ...newBlog, featured_image: data.publicUrl });
+      }
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -268,6 +302,25 @@ const AdminBlogs: React.FC = () => {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit-featured-image" className="text-right">Featured Image</Label>
+                  <div className="col-span-3">
+                    <Input
+                      id="edit-featured-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, true)}
+                      disabled={uploading}
+                    />
+                    {editingBlog.featured_image && (
+                      <img
+                        src={editingBlog.featured_image}
+                        alt="Featured"
+                        className="mt-2 w-32 h-20 object-cover rounded"
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit-content" className="text-right">Content</Label>
                   <Textarea
                     id="edit-content"
@@ -337,6 +390,25 @@ const AdminBlogs: React.FC = () => {
                   className="col-span-3"
                   rows={3}
                 />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="create-featured-image" className="text-right">Featured Image</Label>
+                <div className="col-span-3">
+                  <Input
+                    id="create-featured-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, false)}
+                    disabled={uploading}
+                  />
+                  {newBlog.featured_image && (
+                    <img
+                      src={newBlog.featured_image}
+                      alt="Featured"
+                      className="mt-2 w-32 h-20 object-cover rounded"
+                    />
+                  )}
+                </div>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="create-content" className="text-right">Content</Label>

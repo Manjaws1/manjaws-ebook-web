@@ -6,48 +6,58 @@ import { Input } from "@/components/ui/input";
 import { Search, Calendar, User, ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-// Mock blog posts data
-const blogPosts = [
-  {
-    id: 1,
-    title: "The Future of Digital Reading",
-    excerpt: "Explore how technology is transforming the way we read and consume digital content in the modern age.",
-    author: "Sarah Johnson",
-    date: "2024-05-15",
-    image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Technology"
-  },
-  {
-    id: 2,
-    title: "Building Your Digital Library",
-    excerpt: "Tips and strategies for creating and organizing your personal digital book collection effectively.",
-    author: "Mike Chen",
-    date: "2024-05-10",
-    image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Tips"
-  },
-  {
-    id: 3,
-    title: "Copyright Protection in Digital Publishing",
-    excerpt: "Understanding the importance of copyright protection and how it affects digital book distribution.",
-    author: "Emily Davis",
-    date: "2024-05-05",
-    image: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Legal"
-  }
-];
+interface Blog {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  category: string;
+  featured_image: string | null;
+  created_at: string;
+  author?: {
+    full_name: string | null;
+    email: string;
+  };
+}
+
+const usePublishedBlogs = () => {
+  return useQuery({
+    queryKey: ["published-blogs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blogs")
+        .select(`
+          id,
+          title,
+          excerpt,
+          category,
+          featured_image,
+          created_at,
+          author:profiles(full_name, email)
+        `)
+        .eq("status", "published")
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      return data as Blog[];
+    },
+  });
+};
 
 const Blog: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const { data: blogs = [], isLoading } = usePublishedBlogs();
 
-  const categories = ["All", "Technology", "Tips", "Legal", "Reviews"];
+  // Get unique categories from the blogs data
+  const categories = ["All", ...Array.from(new Set(blogs.map(blog => blog.category)))];
 
-  const filteredPosts = blogPosts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
+  const filteredPosts = blogs.filter(blog => {
+    const matchesSearch = blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (blog.excerpt && blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory = selectedCategory === "All" || blog.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -99,44 +109,56 @@ const Blog: React.FC = () => {
       {/* Blog Posts */}
       <section className="py-16 flex-grow">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.map((post) => (
-              <article key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                    <span className="bg-primary-100 text-primary px-2 py-1 rounded text-xs font-medium">
-                      {post.category}
-                    </span>
-                    <Calendar className="h-4 w-4" />
-                    <span>{post.date}</span>
-                  </div>
-                  <h2 className="text-xl font-semibold mb-3 line-clamp-2">
-                    {post.title}
-                  </h2>
-                  <p className="text-gray-600 mb-4 line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <User className="h-4 w-4" />
-                      <span>{post.author}</span>
+          {isLoading ? (
+            <div className="text-center">Loading blogs...</div>
+          ) : filteredPosts.length === 0 ? (
+            <div className="text-center text-gray-600">No blogs found matching your criteria.</div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredPosts.map((post) => (
+                <article key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                  {post.featured_image ? (
+                    <img
+                      src={post.featured_image}
+                      alt={post.title}
+                      className="w-full h-48 object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-400">No Image</span>
                     </div>
-                    <Button asChild variant="ghost" size="sm">
-                      <Link to={`/blog/${post.id}`} className="flex items-center gap-1">
-                        Read More
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                      <span className="bg-primary-100 text-primary px-2 py-1 rounded text-xs font-medium">
+                        {post.category}
+                      </span>
+                      <Calendar className="h-4 w-4" />
+                      <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <h2 className="text-xl font-semibold mb-3 line-clamp-2">
+                      {post.title}
+                    </h2>
+                    <p className="text-gray-600 mb-4 line-clamp-3">
+                      {post.excerpt}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <User className="h-4 w-4" />
+                        <span>{post.author?.full_name || post.author?.email || "Anonymous"}</span>
+                      </div>
+                      <Button asChild variant="ghost" size="sm">
+                        <Link to={`/blog/${post.id}`} className="flex items-center gap-1">
+                          Read More
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
