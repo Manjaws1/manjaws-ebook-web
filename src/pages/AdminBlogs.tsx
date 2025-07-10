@@ -33,16 +33,29 @@ import {
   Archive,
 } from "lucide-react";
 import { useAdminData, type Blog } from "@/hooks/useAdminData";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminBlogs: React.FC = () => {
-  const { useBlogs, useUpdateBlog, useDeleteBlog } = useAdminData();
+  const { useBlogs, useUpdateBlog, useDeleteBlog, useCreateBlog } = useAdminData();
+  const { user } = useAuth();
   const { data: blogs = [], isLoading } = useBlogs();
   const updateBlogMutation = useUpdateBlog();
   const deleteBlogMutation = useDeleteBlog();
+  const createBlogMutation = useCreateBlog();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
+  const [newBlog, setNewBlog] = useState({
+    title: "",
+    content: "",
+    excerpt: "",
+    category: "",
+    status: "draft",
+    author_id: "",
+    featured_image: null,
+  });
 
   const filteredBlogs = blogs.filter(
     (blog) =>
@@ -65,6 +78,24 @@ const AdminBlogs: React.FC = () => {
     });
     setIsEditDialogOpen(false);
     setEditingBlog(null);
+  };
+
+  const handleCreateBlog = () => {
+    if (!user) return;
+    createBlogMutation.mutate({
+      ...newBlog,
+      author_id: user.id,
+    });
+    setIsCreateDialogOpen(false);
+    setNewBlog({
+      title: "",
+      content: "",
+      excerpt: "",
+      category: "",
+      status: "draft",
+      author_id: "",
+      featured_image: null,
+    });
   };
 
   const handleDeleteBlog = (blogId: string) => {
@@ -106,6 +137,10 @@ const AdminBlogs: React.FC = () => {
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Blog Management</h1>
+          <Button onClick={() => setIsCreateDialogOpen(true)} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Create New Blog
+          </Button>
         </div>
 
         {/* Search */}
@@ -247,6 +282,76 @@ const AdminBlogs: React.FC = () => {
             <DialogFooter>
               <Button onClick={handleEditBlog} disabled={updateBlogMutation.isPending}>
                 {updateBlogMutation.isPending ? "Updating..." : "Update Blog"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Create Blog Dialog */}
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Create New Blog</DialogTitle>
+              <DialogDescription>
+                Create a new blog post.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4 max-h-96 overflow-y-auto">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="create-title" className="text-right">Title</Label>
+                <Input
+                  id="create-title"
+                  value={newBlog.title}
+                  onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="create-category" className="text-right">Category</Label>
+                <Input
+                  id="create-category"
+                  value={newBlog.category}
+                  onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="create-status" className="text-right">Status</Label>
+                <select
+                  id="create-status"
+                  value={newBlog.status}
+                  onChange={(e) => setNewBlog({ ...newBlog, status: e.target.value })}
+                  className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="create-excerpt" className="text-right">Excerpt</Label>
+                <Textarea
+                  id="create-excerpt"
+                  value={newBlog.excerpt}
+                  onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
+                  className="col-span-3"
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="create-content" className="text-right">Content</Label>
+                <Textarea
+                  id="create-content"
+                  value={newBlog.content}
+                  onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
+                  className="col-span-3"
+                  rows={8}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleCreateBlog} disabled={createBlogMutation.isPending}>
+                {createBlogMutation.isPending ? "Creating..." : "Create Blog"}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -338,6 +338,42 @@ export const useAdminData = () => {
     });
   };
 
+  const useCreateBlog = () => {
+    return useMutation({
+      mutationFn: async (blog: Omit<Blog, 'id' | 'created_at' | 'updated_at' | 'author'>) => {
+        const { data, error } = await supabase
+          .from("blogs")
+          .insert([blog])
+          .select()
+          .single();
+        
+        if (error) throw error;
+        
+        // Log admin action
+        await supabase.rpc("log_admin_action", {
+          action_type_param: "create",
+          target_type_param: "blog",
+          target_id_param: data.id,
+          details_param: {
+            title: blog.title,
+            category: blog.category,
+            status: blog.status,
+          },
+        });
+        
+        return data;
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+        queryClient.invalidateQueries({ queryKey: ["admin-actions"] });
+        toast({ title: "Success", description: "Blog created successfully" });
+      },
+      onError: (error: any) => {
+        toast({ title: "Error", description: error.message, variant: "destructive" });
+      },
+    });
+  };
+
   const useDeleteBlog = () => {
     return useMutation({
       mutationFn: async (id: string) => {
@@ -443,6 +479,7 @@ export const useAdminData = () => {
     useAdminActions,
     useUpdateProfile,
     useDeleteProfile,
+    useCreateBlog,
     useUpdateBlog,
     useDeleteBlog,
     useUpdateEbook,

@@ -43,11 +43,11 @@ const Navbar: React.FC = () => {
             <Link to="/browse" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
               Browse eBooks
             </Link>
+            <Link to="/blog" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Blog
+            </Link>
             {user && (
               <>
-                <Link to="/blog" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                  Blog
-                </Link>
                 <Link to="/upload" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   Upload eBook
                 </Link>
@@ -111,11 +111,11 @@ const Navbar: React.FC = () => {
           <Link to="/browse" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
             Browse eBooks
           </Link>
+          <Link to="/blog" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Blog
+          </Link>
           {user && (
             <>
-              <Link to="/blog" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                Blog
-              </Link>
               <Link to="/upload" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 Upload eBook
               </Link>
