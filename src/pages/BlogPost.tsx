@@ -5,9 +5,62 @@ import { Button } from "@/components/ui/button";
 import { Calendar, User, ArrowLeft, Share2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-// Mock blog post data
-const getBlogPost = (id: string) => {
+interface BlogPost {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string | null;
+  category: string;
+  featured_image: string | null;
+  created_at: string;
+  author?: {
+    full_name: string | null;
+    email: string;
+  };
+}
+
+const useBlogPost = (id: string) => {
+  return useQuery({
+    queryKey: ["blog-post", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blogs")
+        .select(`
+          id,
+          title,
+          content,
+          excerpt,
+          category,
+          featured_image,
+          created_at,
+          author:profiles(full_name, email)
+        `)
+        .eq("id", id)
+        .eq("status", "published")
+        .single();
+      
+      if (error) throw error;
+      return data as BlogPost;
+    },
+    enabled: !!id,
+  });
+};
+
+// Fallback mock data for demo purposes
+interface MockBlogPost {
+  id: number;
+  title: string;
+  content: string;
+  author: string;
+  date: string;
+  image: string;
+  category: string;
+}
+
+const getMockBlogPost = (id: string): MockBlogPost | null => {
   const posts = {
     "1": {
       id: 1,
@@ -82,9 +135,26 @@ const getBlogPost = (id: string) => {
 
 const BlogPost: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const post = getBlogPost(id || "");
+  const { data: post, isLoading, error } = useBlogPost(id || "");
+  
+  // Fallback to mock data if no real data found
+  const mockPost = getMockBlogPost(id || "");
 
-  if (!post) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-grow flex items-center justify-center">
+          <div className="text-center">Loading blog post...</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const displayPost = post || mockPost;
+
+  if (!displayPost) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
@@ -107,28 +177,46 @@ const BlogPost: React.FC = () => {
       
       {/* Hero Section */}
       <section className="relative">
-        <img
-          src={post.image}
-          alt={post.title}
-          className="w-full h-64 md:h-96 object-cover"
-        />
+        {('featured_image' in displayPost && displayPost.featured_image) || ('image' in displayPost && displayPost.image) ? (
+          <img
+            src={('featured_image' in displayPost && displayPost.featured_image) || ('image' in displayPost && displayPost.image) || ''}
+            alt={displayPost.title}
+            className="w-full h-64 md:h-96 object-cover"
+          />
+        ) : (
+          <div className="w-full h-64 md:h-96 bg-gradient-to-r from-primary to-primary-800"></div>
+        )}
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-end">
           <div className="container mx-auto px-4 pb-8">
             <div className="text-white">
               <span className="bg-primary px-3 py-1 rounded text-sm font-medium">
-                {post.category}
+                {displayPost.category}
               </span>
               <h1 className="text-3xl md:text-5xl font-bold mt-4 mb-4">
-                {post.title}
+                {displayPost.title}
               </h1>
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" />
-                  <span>{post.author}</span>
+                  <span>
+                    {'author' in displayPost && typeof displayPost.author === 'object' && displayPost.author 
+                      ? displayPost.author.full_name || displayPost.author.email 
+                      : 'author' in displayPost && typeof displayPost.author === 'string'
+                      ? displayPost.author
+                      : "Anonymous"
+                    }
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span>{post.date}</span>
+                  <span>
+                    {'created_at' in displayPost 
+                      ? new Date(displayPost.created_at).toLocaleDateString() 
+                      : 'date' in displayPost 
+                      ? displayPost.date 
+                      : "Unknown date"
+                    }
+                  </span>
                 </div>
               </div>
             </div>
@@ -153,10 +241,13 @@ const BlogPost: React.FC = () => {
               </Button>
             </div>
             
-            <div 
-              className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            <div className="prose prose-lg max-w-none">
+              {displayPost.content ? (
+                <div dangerouslySetInnerHTML={{ __html: displayPost.content }} />
+              ) : (
+                <div className="whitespace-pre-wrap">{displayPost.content}</div>
+              )}
+            </div>
           </div>
         </div>
       </article>

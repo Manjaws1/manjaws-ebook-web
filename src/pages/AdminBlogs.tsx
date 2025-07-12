@@ -76,6 +76,7 @@ const AdminBlogs: React.FC = () => {
         excerpt: editingBlog.excerpt,
         category: editingBlog.category,
         status: editingBlog.status,
+        featured_image: editingBlog.featured_image,
       },
     });
     setIsEditDialogOpen(false);
@@ -87,6 +88,7 @@ const AdminBlogs: React.FC = () => {
     createBlogMutation.mutate({
       ...newBlog,
       author_id: user.id,
+      featured_image: newBlog.featured_image,
     });
     setIsCreateDialogOpen(false);
     setNewBlog({
@@ -117,13 +119,13 @@ const AdminBlogs: React.FC = () => {
       const filePath = `blog-images/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('covers')
+        .from('blog-images')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage
-        .from('covers')
+        .from('blog-images')
         .getPublicUrl(filePath);
 
       if (isEdit && editingBlog) {

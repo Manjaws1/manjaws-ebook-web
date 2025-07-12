@@ -316,6 +316,7 @@ export const useAdminData = () => {
           excerpt: updates.excerpt,
           category: updates.category,
           status: updates.status,
+          featured_image: updates.featured_image,
         };
         
         await supabase.rpc("log_admin_action", {
