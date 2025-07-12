@@ -15,7 +15,7 @@ const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { signIn, user, isAdmin, profile } = useAuth();
+  const { signIn, resetPassword, user, isAdmin, profile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const Login: React.FC = () => {
     
     setIsLoading(true);
     
-    const { error } = await signIn(email, password);
+    const { error } = await signIn(email, password, rememberMe);
     
     if (!error) {
       toast({
@@ -54,6 +54,19 @@ const Login: React.FC = () => {
     }
     
     setIsLoading(false);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address first",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    await resetPassword(email);
   };
 
   return (
@@ -130,12 +143,13 @@ const Login: React.FC = () => {
               </div>
 
               <div className="text-sm">
-                <Link
-                  to="/forgot-password"
-                  className="font-medium text-primary hover:text-primary-700"
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="font-medium text-primary hover:text-primary-700 underline cursor-pointer"
                 >
                   Forgot your password?
-                </Link>
+                </button>
               </div>
             </div>
 

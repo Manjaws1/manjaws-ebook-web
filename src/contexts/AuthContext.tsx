@@ -19,9 +19,10 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error: any }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
   refreshProfile: () => Promise<void>;
   isAdmin: boolean;
 }
@@ -183,11 +184,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, rememberMe: boolean = true) => {
+    // If user doesn't want to be remembered, we'll sign out after a shorter period
+    // Note: Supabase doesn't have a direct persistSession option for signInWithPassword
+    // Instead, we handle this by potentially clearing the session after login if rememberMe is false
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    
+    // If login successful and user doesn't want to be remembered,
+    // we could implement session timeout logic here in the future
+    if (!error && !rememberMe) {
+      // Store a flag in localStorage to indicate this is a temporary session
+      localStorage.setItem('temporarySession', 'true');
+    } else if (!error && rememberMe) {
+      // Remove any temporary session flag
+      localStorage.removeItem('temporarySession');
+    }
     
     if (error) {
       toast({
@@ -232,6 +247,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Password reset email sent! Please check your inbox.",
+      });
+    }
+    
+    return { error };
+  };
+
   // Check if user is admin based on profile role
   const isAdmin = profile?.role === 'admin';
 
@@ -243,6 +279,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signUp,
     signOut,
+    resetPassword,
     refreshProfile,
     isAdmin,
   };
