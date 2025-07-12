@@ -148,7 +148,7 @@ const Blog: React.FC = () => {
                         <span>{post.author?.full_name || post.author?.email || "Anonymous"}</span>
                       </div>
                       <Button asChild variant="ghost" size="sm">
-                        <Link to={`/blog/${post.id}`} className="flex items-center gap-1">
+                        <Link to={`/blogs/${post.id}`} className="flex items-center gap-1">
                           Read More
                           <ArrowRight className="h-4 w-4" />
                         </Link>

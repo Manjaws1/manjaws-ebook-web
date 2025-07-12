@@ -232,7 +232,7 @@ const BlogPost: React.FC = () => {
               <Button asChild variant="ghost">
                 <Link to="/blog" className="flex items-center gap-2">
                   <ArrowLeft className="h-4 w-4" />
-                  Back to Blog
+                  Back to Blog List
                 </Link>
               </Button>
               <Button variant="outline" size="sm">
