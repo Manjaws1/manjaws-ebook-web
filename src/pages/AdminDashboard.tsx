@@ -8,7 +8,8 @@ import AdminBulkActions from "@/components/admin/AdminBulkActions";
 import AdminPresence from "@/components/admin/AdminPresence";
 import CategoryManagement from "@/components/admin/CategoryManagement";
 import AdminBlogs from "@/pages/AdminBlogs";
-import { BarChart, Bell, Users, Zap, Activity, Tags, FileText } from "lucide-react";
+import AdminEbookUpload from "@/components/admin/AdminEbookUpload";
+import { BarChart, Bell, Users, Zap, Activity, Tags, FileText, Upload } from "lucide-react";
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -24,7 +25,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart className="h-4 w-4" />
               Analytics
@@ -52,6 +53,10 @@ const AdminDashboard: React.FC = () => {
             <TabsTrigger value="blogs" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Manage Blogs
+            </TabsTrigger>
+            <TabsTrigger value="upload" className="flex items-center gap-2">
+              <Upload className="h-4 w-4" />
+              Upload eBook
             </TabsTrigger>
           </TabsList>
 
@@ -89,6 +94,10 @@ const AdminDashboard: React.FC = () => {
 
           <TabsContent value="blogs" className="space-y-6">
             <AdminBlogs />
+          </TabsContent>
+
+          <TabsContent value="upload" className="space-y-6">
+            <AdminEbookUpload />
           </TabsContent>
         </Tabs>
       </div>
