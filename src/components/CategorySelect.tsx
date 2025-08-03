@@ -129,7 +129,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
-          {validCategories.length > 0 ? (
+          {!categoriesLoading && validCategories.length > 0 ? (
             <Command>
               <CommandInput placeholder="Search categories..." />
               <CommandEmpty>No categories found.</CommandEmpty>
@@ -150,6 +150,10 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
                 ))}
               </CommandGroup>
             </Command>
+          ) : categoriesLoading ? (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              Loading categories...
+            </div>
           ) : (
             <div className="p-4 text-center text-sm text-muted-foreground">
               No categories available. Please contact an administrator to add categories.
