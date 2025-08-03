@@ -27,6 +27,7 @@ import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 import AdminBlogs from "./pages/AdminBlogs";
 import AdminActions from "./pages/AdminActions";
+import SettingsPage from "./pages/Settings";
 
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/upload" element={<Upload />} />
             <Route path="/library" element={<Library />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blogs/:id" element={<BlogPost />} />
             <Route path="/chat" element={<Chat />} />

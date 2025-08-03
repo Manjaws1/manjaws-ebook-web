@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.12 (cd3cf9e)"
   }
   public: {
     Tables: {
@@ -259,6 +259,53 @@ export type Database = {
           },
         ]
       }
+      flags: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          description: string | null
+          ebook_id: string
+          id: string
+          reason: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          description?: string | null
+          ebook_id: string
+          id?: string
+          reason: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          description?: string | null
+          ebook_id?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flags_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -266,7 +313,9 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
+          notification_preferences: Json | null
           role: string
+          two_factor_enabled: boolean | null
           updated_at: string
         }
         Insert: {
@@ -275,7 +324,9 @@ export type Database = {
           email: string
           full_name?: string | null
           id: string
+          notification_preferences?: Json | null
           role?: string
+          two_factor_enabled?: boolean | null
           updated_at?: string
         }
         Update: {
@@ -284,7 +335,9 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
+          notification_preferences?: Json | null
           role?: string
+          two_factor_enabled?: boolean | null
           updated_at?: string
         }
         Relationships: []

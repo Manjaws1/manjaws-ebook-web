@@ -9,7 +9,9 @@ import AdminPresence from "@/components/admin/AdminPresence";
 import CategoryManagement from "@/components/admin/CategoryManagement";
 import AdminBlogs from "@/pages/AdminBlogs";
 import AdminEbookUpload from "@/components/admin/AdminEbookUpload";
-import { BarChart, Bell, Users, Zap, Activity, Tags, FileText, Upload } from "lucide-react";
+import AdminFlags from "@/pages/AdminFlags";
+import SettingsPage from "@/pages/Settings";
+import { BarChart, Bell, Users, Zap, Activity, Tags, FileText, Upload, Flag, Settings } from "lucide-react";
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -25,7 +27,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-10">
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart className="h-4 w-4" />
               Analytics
@@ -57,6 +59,14 @@ const AdminDashboard: React.FC = () => {
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               Upload eBook
+            </TabsTrigger>
+            <TabsTrigger value="flags" className="flex items-center gap-2">
+              <Flag className="h-4 w-4" />
+              Flags
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Settings
             </TabsTrigger>
           </TabsList>
 
@@ -98,6 +108,14 @@ const AdminDashboard: React.FC = () => {
 
           <TabsContent value="upload" className="space-y-6">
             <AdminEbookUpload />
+          </TabsContent>
+
+          <TabsContent value="flags" className="space-y-6">
+            <AdminFlags />
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-6">
+            <SettingsPage />
           </TabsContent>
         </Tabs>
       </div>
