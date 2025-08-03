@@ -7,9 +7,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Check, ChevronDown, X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEbooks } from "@/hooks/useEbooks";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+
+interface Category {
+  id: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 interface CategorySelectProps {
   selectedCategories: string[];
@@ -23,8 +32,27 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
   required = false,
 }) => {
   const [open, setOpen] = React.useState(false);
-  const { useGetCategories } = useEbooks();
-  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useGetCategories();
+  
+  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      console.log("Fetching categories directly...");
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+      
+      if (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+      }
+      
+      console.log("Categories fetched successfully:", data);
+      return data as Category[];
+    },
+    retry: 2,
+    retryDelay: 1000,
+  });
 
   console.log("CategorySelect - categories:", categories, "loading:", categoriesLoading, "error:", categoriesError);
 
