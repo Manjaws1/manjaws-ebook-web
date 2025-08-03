@@ -106,7 +106,8 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
   }
 
   // Ensure categories is a valid array before rendering Command component
-  const validCategories = Array.isArray(categories) ? categories : [];
+  const validCategories = Array.isArray(categories) && categories.length > 0 ? categories : [];
+  const hasValidData = !categoriesLoading && !categoriesError && validCategories.length > 0;
 
   return (
     <div className="space-y-2">
@@ -129,8 +130,8 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
-          {!categoriesLoading && validCategories.length > 0 ? (
-            <Command>
+          {hasValidData ? (
+            <Command key={`categories-${validCategories.length}`}>
               <CommandInput placeholder="Search categories..." />
               <CommandEmpty>No categories found.</CommandEmpty>
               <CommandGroup>
