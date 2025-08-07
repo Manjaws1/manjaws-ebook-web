@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import AdminLayout from "@/components/admin/AdminLayout";
 import {
   Table,
   TableBody,
@@ -156,7 +157,8 @@ const AdminFlags: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <AdminLayout>
+      <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Flagged eBooks</h1>
         <p className="text-muted-foreground">
@@ -334,7 +336,8 @@ const AdminFlags: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 

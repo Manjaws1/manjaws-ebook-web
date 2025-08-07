@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocation } from "react-router-dom";
+import AdminLayout from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,11 +23,15 @@ interface NotificationPreferences {
 
 const SettingsPage: React.FC = () => {
   const { user, profile, refreshProfile } = useAuth();
+  const location = useLocation();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [newEmail, setNewEmail] = useState(user?.email || "");
   const queryClient = useQueryClient();
+  
+  // Check if we're in admin route
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   const { data: userProfile } = useQuery({
     queryKey: ["user-profile", user?.id],
@@ -170,8 +176,8 @@ const SettingsPage: React.FC = () => {
     admin_announcements: true,
   };
 
-  return (
-    <div className="container mx-auto py-6 space-y-6">
+  const settingsContent = (
+    <div className={isAdminRoute ? "p-6 space-y-6" : "container mx-auto py-6 space-y-6"}>
       <div>
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
           <Settings className="h-8 w-8" />
@@ -369,6 +375,16 @@ const SettingsPage: React.FC = () => {
       </Tabs>
     </div>
   );
+
+  if (isAdminRoute) {
+    return (
+      <AdminLayout>
+        {settingsContent}
+      </AdminLayout>
+    );
+  }
+
+  return settingsContent;
 };
 
 export default SettingsPage;
