@@ -27,6 +27,7 @@ import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 import AdminBlogs from "./pages/AdminBlogs";
 import AdminActions from "./pages/AdminActions";
+import AdminFlags from "./pages/AdminFlags";
 import SettingsPage from "./pages/Settings";
 
 
@@ -85,6 +86,16 @@ const App = () => (
             <Route path="/admin/actions" element={
               <ProtectedRoute requireAdmin={true}>
                 <AdminActions />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/flags" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminFlags />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/settings" element={
+              <ProtectedRoute requireAdmin={true}>
+                <SettingsPage />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
