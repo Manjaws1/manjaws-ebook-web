@@ -37,9 +37,11 @@ const Navbar: React.FC = () => {
           
           {/* Desktop navigation */}
           <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-            <Link to="/" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-              Home
-            </Link>
+            {!user && (
+              <Link to="/" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                Home
+              </Link>
+            )}
             <Link to="/browse" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
               Browse eBooks
             </Link>
@@ -105,9 +107,11 @@ const Navbar: React.FC = () => {
       {/* Mobile menu */}
       <div className={`md:hidden ${isOpen ? "block" : "hidden"}`}>
         <div className="flex flex-col px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link to="/" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-            Home
-          </Link>
+          {!user && (
+            <Link to="/" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Home
+            </Link>
+          )}
           <Link to="/browse" onClick={closeMenu} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
             Browse eBooks
           </Link>
