@@ -29,6 +29,7 @@ import AdminBlogs from "./pages/AdminBlogs";
 import AdminActions from "./pages/AdminActions";
 import AdminFlags from "./pages/AdminFlags";
 import SettingsPage from "./pages/Settings";
+import Preview from "./pages/Preview";
 
 
 const queryClient = new QueryClient();
@@ -98,6 +99,7 @@ const App = () => (
                 <SettingsPage />
               </ProtectedRoute>
             } />
+            <Route path="/preview/:id" element={<Preview />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

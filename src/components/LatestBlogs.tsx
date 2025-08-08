@@ -142,7 +142,7 @@ const LatestBlogs: React.FC = () => {
                       size="sm" 
                       className="w-full group-hover:bg-primary group-hover:text-white transition-colors"
                     >
-                      <Link to={`/blog/${blog.id}`} className="flex items-center justify-center gap-2">
+                      <Link to={`/blogs/${blog.id}`} className="flex items-center justify-center gap-2">
                         Read More <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>

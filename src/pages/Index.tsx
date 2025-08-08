@@ -144,7 +144,7 @@ const Index: React.FC = () => {
                 Advanced DRM and copyright protection ensures authors' intellectual property is secure.
               </p>
               <Button asChild variant="outline" size="sm">
-                <Link to="/blog/3">Learn More</Link>
+                <Link to="/blog">Learn More</Link>
               </Button>
             </div>
           </div>

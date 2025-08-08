@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Eye, Clock, CheckCircle, XCircle } from "lucide-react";
 import { Ebook, useEbooks } from "@/hooks/useEbooks";
+import { Link } from "react-router-dom";
 
 interface EbookCardProps {
   ebook: Ebook;
@@ -108,9 +109,11 @@ const EbookCard: React.FC<EbookCardProps> = ({ ebook, showStatus = false, showAc
               <Download className="h-4 w-4 mr-2" />
               Download
             </Button>
-            <Button variant="outline" size="sm">
-              <Eye className="h-4 w-4 mr-2" />
-              Preview
+            <Button variant="outline" size="sm" asChild>
+              <Link to={`/preview/${ebook.id}`}>
+                <Eye className="h-4 w-4 mr-2" />
+                Preview
+              </Link>
             </Button>
           </div>
         )}

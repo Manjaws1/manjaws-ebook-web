@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle, XCircle, Eye, Trash2, Clock } from "lucide-react";
 import { useEbooks } from "@/hooks/useEbooks";
+import { Link } from "react-router-dom";
 
 const EbookManagement = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -108,10 +109,12 @@ const EbookManagement = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => window.open(ebook.file_url!, "_blank")}
+                      asChild
                     >
-                      <Eye className="h-4 w-4 mr-1" />
-                      Preview
+                      <Link to={`/preview/${ebook.id}`}>
+                        <Eye className="h-4 w-4 mr-1" />
+                        Preview
+                      </Link>
                     </Button>
                   )}
                   <Button
