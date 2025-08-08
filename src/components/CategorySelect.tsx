@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Check, ChevronDown, X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -133,23 +133,25 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
           {hasValidData ? (
             <Command key={`categories-${validCategories.length}`}>
               <CommandInput placeholder="Search categories..." />
-              <CommandEmpty>No categories found.</CommandEmpty>
-              <CommandGroup>
-                {validCategories.map((category) => (
-                  <CommandItem
-                    key={category.id}
-                    onSelect={() => handleCategoryToggle(category.name)}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        selectedCategories.includes(category.name) ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {category.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+              <CommandList>
+                <CommandEmpty>No categories found.</CommandEmpty>
+                <CommandGroup>
+                  {validCategories.map((category) => (
+                    <CommandItem
+                      key={category.id}
+                      onSelect={() => handleCategoryToggle(category.name)}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedCategories.includes(category.name) ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {category.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
             </Command>
           ) : categoriesLoading ? (
             <div className="p-4 text-center text-sm text-muted-foreground">
