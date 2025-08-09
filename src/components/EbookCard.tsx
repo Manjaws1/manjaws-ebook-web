@@ -51,20 +51,21 @@ const EbookCard: React.FC<EbookCardProps> = ({ ebook, showStatus = false, showAc
   };
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col group hover:shadow-lg transition-shadow duration-300">
       {ebook.cover_image && (
         <div className="aspect-[3/4] overflow-hidden rounded-t-lg">
           <img
             src={ebook.cover_image}
             alt={ebook.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
           />
         </div>
       )}
       
-      <CardHeader className="flex-shrink-0">
+      <CardHeader className="flex-shrink-0 p-3 lg:p-4">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg line-clamp-2">{ebook.title}</CardTitle>
+          <CardTitle className="text-base lg:text-lg line-clamp-2 leading-tight">{ebook.title}</CardTitle>"
           {showStatus && (
             <Badge className={`${getStatusColor(ebook.status)} flex items-center gap-1`}>
               {getStatusIcon(ebook.status)}
@@ -74,20 +75,20 @@ const EbookCard: React.FC<EbookCardProps> = ({ ebook, showStatus = false, showAc
         </div>
         <CardDescription>
           <div className="space-y-1">
-            <p className="font-medium">by {ebook.author}</p>
-            <p className="text-sm">{ebook.category}</p>
+            <p className="font-medium text-sm lg:text-base">by {ebook.author}</p>
+            <p className="text-xs lg:text-sm">{ebook.category}</p>
           </div>
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col">
+      <CardContent className="flex-1 flex flex-col p-3 lg:p-4 pt-0">
         {ebook.description && (
-          <p className="text-sm text-muted-foreground mb-4 line-clamp-3 flex-1">
+          <p className="text-xs lg:text-sm text-muted-foreground mb-3 lg:mb-4 line-clamp-3 flex-1">
             {ebook.description}
           </p>
         )}
 
-        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+        <div className="flex items-center justify-between text-xs lg:text-sm text-muted-foreground mb-3 lg:mb-4">
           <span className="flex items-center gap-1">
             <Download className="h-3 w-3" />
             {ebook.downloads} downloads
@@ -98,20 +99,20 @@ const EbookCard: React.FC<EbookCardProps> = ({ ebook, showStatus = false, showAc
         </div>
 
         {showActions && ebook.status === "approved" && (
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Button
               variant="default"
               size="sm"
-              className="flex-1"
+              className="flex-1 text-xs lg:text-sm"
               onClick={handleDownload}
               disabled={!ebook.file_url || downloadMutation.isPending}
             >
-              <Download className="h-4 w-4 mr-2" />
+              <Download className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
               Download
             </Button>
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" size="sm" asChild className="flex-1 text-xs lg:text-sm">
               <Link to={`/preview/${ebook.id}`}>
-                <Eye className="h-4 w-4 mr-2" />
+                <Eye className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
                 Preview
               </Link>
             </Button>

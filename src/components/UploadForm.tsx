@@ -47,19 +47,19 @@ const UploadForm = () => {
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Upload className="h-5 w-5" />
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader className="space-y-1">
+        <CardTitle className="flex items-center gap-2 text-xl lg:text-2xl">
+          <Upload className="h-5 w-5 lg:h-6 lg:w-6" />
           Upload eBook
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm lg:text-base">
           Share your eBook with the community. All uploads are reviewed before publication.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardContent className="p-4 lg:p-6">
+        <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">"
             <div className="space-y-2">
               <Label htmlFor="title">Title *</Label>
               <Input
@@ -81,14 +81,15 @@ const UploadForm = () => {
               />
             </div>
           </div>
+          <div className="col-span-full">"
+            <CategorySelect
+              selectedCategories={categories}
+              onCategoriesChange={setCategories}
+              required
+            />
+          </div>
 
-          <CategorySelect
-            selectedCategories={categories}
-            onCategoriesChange={setCategories}
-            required
-          />
-
-          <div className="space-y-2">
+          <div className="col-span-full space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
@@ -96,10 +97,11 @@ const UploadForm = () => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter book description"
               rows={4}
+              className="resize-none"
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
             <div className="space-y-2">
               <Label htmlFor="file">eBook File *</Label>
               <div className="flex items-center gap-2">
@@ -109,8 +111,9 @@ const UploadForm = () => {
                   accept=".pdf,.epub,.mobi"
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                   required
+                  className="cursor-pointer"
                 />
-                <FileText className="h-4 w-4 text-muted-foreground" />
+                <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               </div>
               <p className="text-xs text-muted-foreground">
                 Supported formats: PDF, EPUB, MOBI
@@ -125,8 +128,9 @@ const UploadForm = () => {
                   type="file"
                   accept="image/*"
                   onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
+                  className="cursor-pointer"
                 />
-                <Image className="h-4 w-4 text-muted-foreground" />
+                <Image className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               </div>
               <p className="text-xs text-muted-foreground">
                 Optional: JPG, PNG, WebP
@@ -136,8 +140,9 @@ const UploadForm = () => {
 
           <Button
             type="submit"
-            className="w-full"
+            className="w-full py-3 text-base lg:text-lg"
             disabled={uploadMutation.isPending}
+            size="lg"
           >
             {uploadMutation.isPending ? "Uploading..." : "Upload eBook"}
           </Button>
