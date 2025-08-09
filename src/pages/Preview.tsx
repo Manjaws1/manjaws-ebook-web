@@ -128,10 +128,8 @@ const Preview: React.FC = () => {
 
                 {/* Actions */}
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <Button asChild>
-                    <a href={`/preview/${ebook.id}`} onClick={(e) => e.preventDefault()}>
-                      Preview
-                    </a>
+                  <Button variant="secondary" disabled>
+                    Preview
                   </Button>
                   <Button asChild variant="outline" disabled={!ebook.file_url}>
                     <a href={ebook.file_url ?? "#"} target="_blank" rel="noreferrer">
