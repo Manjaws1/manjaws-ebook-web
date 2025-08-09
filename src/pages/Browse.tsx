@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EbookCard from "@/components/EbookCard";
@@ -19,12 +19,16 @@ const Browse = () => {
 
   console.log("Browse - categories:", categories, "loading:", categoriesLoading);
 
-  const filteredEbooks = ebooks.filter(ebook => {
-    const matchesSearch = ebook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         ebook.author.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || ebook.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredEbooks = useMemo(() => {
+    return ebooks.filter(ebook => {
+      const matchesSearch = ebook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           ebook.author.toLowerCase().includes(searchTerm.toLowerCase());
+      const trimmedSelectedCategory = selectedCategory.trim();
+      const trimmedEbookCategory = ebook.category?.trim();
+      const matchesCategory = trimmedSelectedCategory === "all" || trimmedEbookCategory === trimmedSelectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [ebooks, searchTerm, selectedCategory]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -46,20 +50,22 @@ const Browse = () => {
                 className="pl-10"
               />
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value.trim())}>
               <SelectTrigger className="w-full md:w-48">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 {categoriesLoading ? (
-                  <SelectItem value="" disabled>Loading categories...</SelectItem>
-                ) : (
-                  categories?.map((category) => (
-                    <SelectItem key={category.id} value={category.name}>
+                  <SelectItem value="loading" disabled>Loading categories...</SelectItem>
+                ) : categories && categories.length > 0 ? (
+                  categories.map((category) => (
+                    <SelectItem key={category.id} value={category.name.trim()}>
                       {category.name}
                     </SelectItem>
                   ))
+                ) : (
+                  <SelectItem value="no-categories" disabled>No categories found</SelectItem>
                 )}
               </SelectContent>
             </Select>
@@ -76,17 +82,19 @@ const Browse = () => {
             </Badge>
             {categoriesLoading ? (
               <Badge variant="outline" className="animate-pulse">Loading...</Badge>
-            ) : (
-              categories?.map((category) => (
+            ) : categories && categories.length > 0 ? (
+              categories.map((category) => (
                 <Badge
                   key={category.id}
-                  variant={selectedCategory === category.name ? "default" : "outline"}
+                  variant={selectedCategory.trim() === category.name.trim() ? "default" : "outline"}
                   className="cursor-pointer"
-                  onClick={() => setSelectedCategory(category.name)}
+                  onClick={() => setSelectedCategory(category.name.trim())}
                 >
                   {category.name}
                 </Badge>
               ))
+            ) : (
+              <Badge variant="outline" className="opacity-50">No categories available</Badge>
             )}
           </div>
         </div>
