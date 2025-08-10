@@ -20,14 +20,10 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (user && profile) {
-      // Redirect based on user role
-      if (isAdmin) {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+      // After login, always go to Browse page
+      navigate('/browse');
     }
-  }, [user, profile, isAdmin, navigate]);
+  }, [user, profile, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

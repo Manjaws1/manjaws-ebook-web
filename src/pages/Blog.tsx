@@ -119,9 +119,13 @@ const Blog: React.FC = () => {
                 <article key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                   {post.featured_image ? (
                     <img
-                      src={post.featured_image}
+                      src={supabase.storage.from('blog-images').getPublicUrl(post.featured_image).data.publicUrl}
                       alt={post.title}
                       className="w-full h-48 object-cover"
+                      loading="lazy"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=60`;
+                      }}
                     />
                   ) : (
                     <div className="w-full h-48 bg-gray-200 flex items-center justify-center">

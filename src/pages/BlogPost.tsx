@@ -179,9 +179,15 @@ const BlogPost: React.FC = () => {
       <section className="relative">
         {('featured_image' in displayPost && displayPost.featured_image) || ('image' in displayPost && displayPost.image) ? (
           <img
-            src={('featured_image' in displayPost && displayPost.featured_image) || ('image' in displayPost && displayPost.image) || ''}
+            src={('featured_image' in displayPost && displayPost.featured_image)
+              ? supabase.storage.from('blog-images').getPublicUrl(displayPost.featured_image as string).data.publicUrl
+              : (('image' in displayPost && (displayPost as any).image) || '')}
             alt={displayPost.title}
             className="w-full h-64 md:h-96 object-cover"
+            loading="lazy"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = `https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=60`;
+            }}
           />
         ) : (
           <div className="w-full h-64 md:h-96 bg-gradient-to-r from-primary to-primary-800"></div>

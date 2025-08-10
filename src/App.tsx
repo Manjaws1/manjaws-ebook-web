@@ -30,6 +30,7 @@ import AdminActions from "./pages/AdminActions";
 import AdminFlags from "./pages/AdminFlags";
 import SettingsPage from "./pages/Settings";
 import Preview from "./pages/Preview";
+import ResetPassword from "./pages/ResetPassword";
 
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/library" element={<Library />} />

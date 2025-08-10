@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
@@ -19,9 +21,22 @@ const Register: React.FC = () => {
   const { signUp, user } = useAuth();
   const navigate = useNavigate();
 
+  // Password validation checks
+  const passwordChecks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>\-_/\\\[\];'`~+=]/.test(password),
+  } as const;
+  const strengthScore = Number(passwordChecks.length) + Number(passwordChecks.uppercase) + Number(passwordChecks.lowercase) + Number(passwordChecks.number) + Number(passwordChecks.special);
+  const strengthPercent = (strengthScore / 5) * 100;
+  const strengthLabel = strengthScore <= 2 ? 'Weak' : strengthScore <= 4 ? 'Medium' : 'Strong';
+  const allPasswordValid = Object.values(passwordChecks).every(Boolean) && password === confirmPassword;
+
   useEffect(() => {
     if (user) {
-      navigate('/');
+      navigate('/browse');
     }
   }, [user, navigate]);
 
@@ -36,11 +51,11 @@ const Register: React.FC = () => {
       });
       return;
     }
-    
-    if (password !== confirmPassword) {
+
+    if (!allPasswordValid) {
       toast({
-        title: "Error",
-        description: "Passwords do not match",
+        title: "Weak password",
+        description: "Please meet all password requirements before continuing.",
         variant: "destructive",
       });
       return;
@@ -158,6 +173,18 @@ const Register: React.FC = () => {
                   placeholder="Confirm your password"
                 />
               </div>
+
+              <div className="rounded-md bg-gray-50 p-3 text-sm">
+                <p className="font-medium mb-2">Password requirements</p>
+                <ul className="space-y-1">
+                  <li className={passwordChecks.uppercase ? "text-green-600" : "text-gray-500"}>Has uppercase letter</li>
+                  <li className={passwordChecks.lowercase ? "text-green-600" : "text-gray-500"}>Has lowercase letter</li>
+                  <li className={passwordChecks.number ? "text-green-600" : "text-gray-500"}>Has number</li>
+                  <li className={passwordChecks.special ? "text-green-600" : "text-gray-500"}>Has special character</li>
+                  <li className={passwordChecks.length ? "text-green-600" : "text-gray-500"}>Minimum length 8</li>
+                  <li className={password && confirmPassword && password === confirmPassword ? "text-green-600" : "text-gray-500"}>Passwords match</li>
+                </ul>
+              </div>
             </div>
 
             <div className="flex items-center">
@@ -191,7 +218,7 @@ const Register: React.FC = () => {
               <Button
                 type="submit"
                 className="w-full bg-primary hover:bg-primary-700"
-                disabled={isLoading}
+                disabled={isLoading || !allPasswordValid || !agreeTerms}
               >
                 {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
