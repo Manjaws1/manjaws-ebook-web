@@ -30,6 +30,8 @@ import {
 } from "lucide-react";
 import { useAdminData, type Profile } from "@/hooks/useAdminData";
 
+const SUPER_ADMIN_EMAIL = "gbenlekamolideen@gmail.com";
+
 const AdminUsers: React.FC = () => {
   const { useProfiles, useUpdateProfile, useDeleteProfile } = useAdminData();
   const { data: profiles = [], isLoading } = useProfiles();
@@ -48,12 +50,15 @@ const AdminUsers: React.FC = () => {
 
   const handleEditProfile = () => {
     if (!editingProfile) return;
+    const updates: Partial<Profile> = {
+      full_name: editingProfile.full_name,
+    };
+    if (editingProfile.email.toLowerCase() !== SUPER_ADMIN_EMAIL.toLowerCase()) {
+      updates.role = editingProfile.role;
+    }
     updateProfileMutation.mutate({
       id: editingProfile.id,
-      updates: {
-        full_name: editingProfile.full_name,
-        role: editingProfile.role,
-      },
+      updates,
     });
     setIsEditDialogOpen(false);
     setEditingProfile(null);
@@ -209,6 +214,8 @@ const AdminUsers: React.FC = () => {
                     value={editingProfile.role}
                     onChange={(e) => setEditingProfile({ ...editingProfile, role: e.target.value })}
                     className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+                    disabled={editingProfile.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()}
+                    title={editingProfile.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase() ? "You cannot change the role of the Super Admin" : undefined}
                   >
                     <option value="user">User</option>
                     <option value="moderator">Moderator</option>

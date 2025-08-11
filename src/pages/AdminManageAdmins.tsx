@@ -25,6 +25,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
+const SUPER_ADMIN_EMAIL = "gbenlekamolideen@gmail.com";
+
 interface AdminUser {
   id: string;
   email: string;
@@ -133,6 +135,10 @@ const AdminManageAdmins: React.FC = () => {
   };
 
   const handleDeleteAdmin = (adminUserId: string, email: string) => {
+    if (email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) {
+      toast({ title: "Action blocked", description: "You cannot change the role of the Super Admin", variant: "destructive" });
+      return;
+    }
     if (confirm(`Are you sure you want to remove ${email} from admin users?`)) {
       deleteAdminMutation.mutate(adminUserId);
     }
@@ -204,7 +210,8 @@ const AdminManageAdmins: React.FC = () => {
                         size="sm"
                         onClick={() => handleDeleteAdmin(adminUser.id, adminUser.email)}
                         className="text-red-600 hover:text-red-700"
-                        disabled={deleteAdminMutation.isPending}
+                        disabled={deleteAdminMutation.isPending || adminUser.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()}
+                        title={adminUser.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase() ? "You cannot change the role of the Super Admin" : undefined}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
