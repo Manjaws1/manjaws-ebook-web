@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import DOMPurify from "dompurify";
 
 interface BlogPost {
   id: string;
@@ -249,7 +250,7 @@ const BlogPost: React.FC = () => {
             
             <div className="prose prose-lg max-w-none">
               {displayPost.content ? (
-                <div dangerouslySetInnerHTML={{ __html: displayPost.content }} />
+                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(displayPost.content) }} />
               ) : (
                 <div className="whitespace-pre-wrap">{displayPost.content}</div>
               )}

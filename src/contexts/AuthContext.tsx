@@ -43,6 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const [isAdminState, setIsAdminState] = useState(false);
 
   useEffect(() => {
     // Get initial session
@@ -139,6 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (adminError) {
         console.error('Error checking admin status:', adminError);
       }
+      setIsAdminState(!!adminCheck);
       
       // Get profile data
       const { data: profileData, error: profileError } = await supabase
@@ -268,8 +270,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  // Check if user is admin based on profile role
-  const isAdmin = profile?.role === 'admin';
+  // Admin status derived from server-side check only
+  const isAdmin = isAdminState;
 
   const value = {
     user,
