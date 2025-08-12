@@ -27,7 +27,7 @@ const Index: React.FC = () => {
               <p className="text-lg sm:text-xl lg:text-2xl mb-6 lg:mb-8 text-white/90 leading-relaxed animate-fade-in animation-delay-200 max-w-2xl mx-auto lg:mx-0">
                 Join thousands of readers and writers in our growing digital library. Find your next favorite read or share your knowledge with the world.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center lg:justify-start max-w-md mx-auto lg:mx-0">"
+              <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center lg:justify-start max-w-md mx-auto lg:mx-0">
                 <Button asChild size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg hover-scale">
                   <Link to="/browse">
                     <Search className="mr-2 lg:mr-3 h-5 w-5 lg:h-6 lg:w-6" />
@@ -42,7 +42,7 @@ const Index: React.FC = () => {
                 </Button>
               </div>
             </div>
-            <div className="w-full lg:w-1/2 flex justify-center relative mt-8 lg:mt-0">"
+            <div className="w-full lg:w-1/2 flex justify-center relative mt-8 lg:mt-0">
               <div className="relative group">
                 <div className="absolute -inset-2 lg:-inset-4 bg-gradient-to-r from-secondary to-primary rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
                 <img 
@@ -54,7 +54,7 @@ const Index: React.FC = () => {
                     const target = e.target as HTMLImageElement;
                     target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-size='18' fill='%236b7280'%3EBooks Collection%3C/text%3E%3C/svg%3E";
                   }}
-                />"
+                />
               </div>
             </div>
           </div>
@@ -70,7 +70,7 @@ const Index: React.FC = () => {
               Three simple steps to join our thriving community of readers and writers
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             <div className="group bg-white p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-center border border-gray-100">
               <div className="bg-gradient-to-br from-primary to-primary-800 p-3 lg:p-4 rounded-2xl inline-flex items-center justify-center mb-4 lg:mb-6 group-hover:scale-110 transition-transform duration-300">
                 <BookOpen className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
@@ -79,7 +79,7 @@ const Index: React.FC = () => {
               <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
                 Explore our vast collection of e-books across diverse categories and discover your next favorite read.
               </p>
-            </div>"
+            </div>
             
             <div className="group bg-white p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-center border border-gray-100">
               <div className="bg-gradient-to-br from-secondary to-secondary/80 p-3 lg:p-4 rounded-2xl inline-flex items-center justify-center mb-4 lg:mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -91,7 +91,7 @@ const Index: React.FC = () => {
               </p>
             </div>
             
-            <div className="group bg-white p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-center border border-gray-100 md:col-span-2 lg:col-span-1">
+            <div className="group bg-white p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-center border border-gray-100">
               <div className="bg-gradient-to-br from-emerald-500 to-teal-500 p-3 lg:p-4 rounded-2xl inline-flex items-center justify-center mb-4 lg:mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Library className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
               </div>
@@ -99,7 +99,7 @@ const Index: React.FC = () => {
               <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
                 Create your personal digital library and access your favorite books anytime, anywhere.
               </p>
-            </div>"
+            </div>
           </div>
         </div>
       </section>
@@ -108,7 +108,7 @@ const Index: React.FC = () => {
       <section className="py-12 lg:py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl lg:text-3xl font-bold text-center mb-8 lg:mb-12">New Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             <div className="bg-gradient-to-br from-secondary/10 to-secondary/5 p-4 lg:p-6 rounded-lg shadow-md text-center border border-secondary/20">
               <div className="bg-secondary/20 p-2 lg:p-3 rounded-full inline-flex items-center justify-center mb-3 lg:mb-4">
                 <BookOpen className="h-6 w-6 lg:h-8 lg:w-8 text-secondary-foreground" />
@@ -120,7 +120,7 @@ const Index: React.FC = () => {
               <Button asChild variant="outline" size="sm">
                 <Link to="/blog">Explore Blog</Link>
               </Button>
-            </div>"
+            </div>
             
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 lg:p-6 rounded-lg shadow-md text-center border border-primary/20">
               <div className="bg-primary/20 p-2 lg:p-3 rounded-full inline-flex items-center justify-center mb-3 lg:mb-4">
@@ -135,7 +135,7 @@ const Index: React.FC = () => {
               </Button>
             </div>
             
-            <div className="bg-gradient-to-br from-green-100 to-green-50 p-4 lg:p-6 rounded-lg shadow-md text-center border border-green-200 md:col-span-2 lg:col-span-1">
+            <div className="bg-gradient-to-br from-green-100 to-green-50 p-4 lg:p-6 rounded-lg shadow-md text-center border border-green-200">
               <div className="bg-green-200 p-2 lg:p-3 rounded-full inline-flex items-center justify-center mb-3 lg:mb-4">
                 <Shield className="h-6 w-6 lg:h-8 lg:w-8 text-green-700" />
               </div>
@@ -146,7 +146,7 @@ const Index: React.FC = () => {
               <Button asChild variant="outline" size="sm">
                 <Link to="/blog">Learn More</Link>
               </Button>
-            </div>"
+            </div>
           </div>
         </div>
       </section>
