@@ -342,6 +342,24 @@ export type Database = {
         }
         Relationships: []
       }
+      super_admins: {
+        Row: {
+          created_at: string
+          email: string
+          is_active: boolean
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          is_active?: boolean
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          is_active?: boolean
+        }
+        Relationships: []
+      }
       user_downloads: {
         Row: {
           downloaded_at: string
@@ -390,6 +408,14 @@ export type Database = {
       increment_download_count: {
         Args: { ebook_uuid: string; user_uuid: string }
         Returns: undefined
+      }
+      is_email_super_admin: {
+        Args: { p_email: string }
+        Returns: boolean
+      }
+      is_super_admin_by_user: {
+        Args: { p_user_id: string }
+        Returns: boolean
       }
       is_user_admin: {
         Args: { user_id: string }
