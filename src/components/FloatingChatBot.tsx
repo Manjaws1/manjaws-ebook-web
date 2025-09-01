@@ -9,6 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { chatbotService } from "@/services/chatbotService";
 
 interface Message {
   id: number;
@@ -39,30 +40,8 @@ const FloatingChatBot: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const generateBotResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.includes("recommend") || lowerMessage.includes("suggestion") || lowerMessage.includes("book")) {
-      return "I'd be happy to help with book recommendations! At Manjaws E-Book, we have a diverse collection including fiction, non-fiction, technical books, and academic texts. You can browse our collection on the Browse eBooks page. What genre interests you most?";
-    } else if (lowerMessage.includes("upload") || lowerMessage.includes("publish")) {
-      return "To upload your e-book to Manjaws E-Book, you'll need to create an account and go to the 'Upload eBook' section. Please ensure your content is original and doesn't violate copyright laws. We support PDF, EPUB, and MOBI formats. All uploads are protected by our copyright protection system.";
-    } else if (lowerMessage.includes("copyright") || lowerMessage.includes("protection") || lowerMessage.includes("drm")) {
-      return "Manjaws E-Book takes copyright protection very seriously. We use advanced DRM (Digital Rights Management) technology to protect authors' intellectual property. All content is monitored and protected against unauthorized copying or distribution.";
-    } else if (lowerMessage.includes("account") || lowerMessage.includes("login") || lowerMessage.includes("register")) {
-      return "You can create a free account on Manjaws E-Book by clicking the Login button and then selecting 'create a new account'. Having an account allows you to upload e-books, build your personal library, access our blog, and more!";
-    } else if (lowerMessage.includes("library") || lowerMessage.includes("my books")) {
-      return "Your personal library on Manjaws E-Book stores all your uploaded and saved e-books. You can access it through the 'My Library' section after logging in. It's your personal collection where you can organize and access your favorite reads.";
-    } else if (lowerMessage.includes("blog")) {
-      return "Our blog features the latest insights about digital reading, e-book publishing tips, technology trends, and industry news. You can access it through the Blog section after creating an account. It's a great resource for both readers and authors!";
-    } else if (lowerMessage.includes("admin") || lowerMessage.includes("manage")) {
-      return "Administrative features are available for authorized users only. Admins can manage users, moderate e-book content, and oversee platform operations. If you're an author or publisher interested in administrative access, please contact our support team.";
-    } else if (lowerMessage.includes("format") || lowerMessage.includes("file type")) {
-      return "Manjaws E-Book supports multiple e-book formats including PDF, EPUB, and MOBI. For the best reading experience across all devices, we recommend EPUB format as it's responsive and adapts well to different screen sizes.";
-    } else if (lowerMessage.includes("help") || lowerMessage.includes("support")) {
-      return "I'm here to help with any questions about Manjaws E-Book! You can ask about our platform features, uploading guidelines, account management, or book recommendations. For technical issues, you can also contact our support team.";
-    } else {
-      return "Thank you for your question! I'm designed to help with information about Manjaws E-Book platform, including uploading e-books, browsing our collection, account management, and our copyright protection features. Could you please be more specific about what you'd like to know?";
-    }
+  const generateBotResponse = async (userMessage: string): Promise<string> => {
+    return await chatbotService.generateResponse(userMessage);
   };
 
   const handleSendMessage = async () => {
@@ -79,18 +58,33 @@ const FloatingChatBot: React.FC = () => {
     setInputMessage("");
     setIsTyping(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: messages.length + 2,
-        text: generateBotResponse(inputMessage),
-        sender: "bot",
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 1500);
+    // Generate AI response with real data
+    try {
+      const responseText = await generateBotResponse(inputMessage);
+      setTimeout(() => {
+        const botResponse: Message = {
+          id: messages.length + 2,
+          text: responseText,
+          sender: "bot",
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, botResponse]);
+        setIsTyping(false);
+      }, 1000 + Math.random() * 1500);
+    } catch (error) {
+      setTimeout(() => {
+        const botResponse: Message = {
+          id: messages.length + 2,
+          text: "I'm sorry, I'm having trouble accessing our database right now. Please try again in a moment or browse our site directly.",
+          sender: "bot",
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, botResponse]);
+        setIsTyping(false);
+      }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

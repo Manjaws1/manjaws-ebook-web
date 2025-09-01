@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Send, Bot, User, MessageCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { chatbotService } from "@/services/chatbotService";
 
 interface Message {
   id: number;
@@ -34,22 +35,8 @@ const Chat: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const generateBotResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.includes("recommend") || lowerMessage.includes("suggestion")) {
-      return "I'd be happy to recommend some books! What genre are you interested in? We have a wide selection of fiction, non-fiction, technical books, and more in our library.";
-    } else if (lowerMessage.includes("upload") || lowerMessage.includes("publish")) {
-      return "To upload your e-book, you'll need to create an account and go to the 'Upload eBook' section. Make sure your content is original and doesn't violate any copyright laws. We support PDF, EPUB, and MOBI formats.";
-    } else if (lowerMessage.includes("copyright") || lowerMessage.includes("protection")) {
-      return "We take copyright protection seriously at Manjaws E-Book. All uploaded content is scanned for copyright violations, and we use advanced DRM systems to protect authors' intellectual property. Please only upload content you own or have permission to distribute.";
-    } else if (lowerMessage.includes("help") || lowerMessage.includes("support")) {
-      return "I'm here to help! You can ask me about book recommendations, how to use our platform, uploading guidelines, or any other questions about Manjaws E-Book. What specific help do you need?";
-    } else if (lowerMessage.includes("format") || lowerMessage.includes("file")) {
-      return "We support multiple e-book formats including PDF, EPUB, and MOBI. For the best reading experience, we recommend EPUB format as it's responsive and works well across all devices.";
-    } else {
-      return "That's an interesting question! While I can help with basic information about our platform, for more complex queries, you might want to browse our blog or contact our support team. Is there anything specific about e-books or our platform I can help you with?";
-    }
+  const generateBotResponse = async (userMessage: string): Promise<string> => {
+    return await chatbotService.generateResponse(userMessage);
   };
 
   const handleSendMessage = async () => {
@@ -66,18 +53,33 @@ const Chat: React.FC = () => {
     setInputMessage("");
     setIsTyping(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: messages.length + 2,
-        text: generateBotResponse(inputMessage),
-        sender: "bot",
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 2000);
+    // Generate AI response with real data
+    try {
+      const responseText = await generateBotResponse(inputMessage);
+      setTimeout(() => {
+        const botResponse: Message = {
+          id: messages.length + 2,
+          text: responseText,
+          sender: "bot",
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, botResponse]);
+        setIsTyping(false);
+      }, 1000 + Math.random() * 2000);
+    } catch (error) {
+      setTimeout(() => {
+        const botResponse: Message = {
+          id: messages.length + 2,
+          text: "I'm sorry, I'm having trouble accessing our database right now. Please try again in a moment or browse our site directly.",
+          sender: "bot",
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, botResponse]);
+        setIsTyping(false);
+      }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -193,10 +195,18 @@ const Chat: React.FC = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setInputMessage("Can you recommend some good books?")}
+              onClick={() => setInputMessage("What categories do you have?")}
               disabled={isTyping}
             >
-              Book Recommendations
+              View Categories
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setInputMessage("Recommend some popular books")}
+              disabled={isTyping}
+            >
+              Popular Books
             </Button>
             <Button
               variant="outline"
@@ -209,10 +219,10 @@ const Chat: React.FC = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setInputMessage("Tell me about copyright protection")}
+              onClick={() => setInputMessage("Show me fiction books")}
               disabled={isTyping}
             >
-              Copyright Info
+              Fiction Books
             </Button>
           </div>
         </div>
