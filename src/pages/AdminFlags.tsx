@@ -158,7 +158,7 @@ const AdminFlags: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-3 lg:p-4 xl:p-6 space-y-4 lg:space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Flagged eBooks</h1>
         <p className="text-muted-foreground">

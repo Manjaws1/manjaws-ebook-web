@@ -147,7 +147,7 @@ const AdminManageAdmins: React.FC = () => {
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="p-6">
+        <div className="p-3 lg:p-4 xl:p-6">
           <div className="text-center">Loading admin users...</div>
         </div>
       </AdminLayout>
@@ -156,7 +156,7 @@ const AdminManageAdmins: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="p-6">
+      <div className="p-3 lg:p-4 xl:p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold">Manage Admin Users</h1>

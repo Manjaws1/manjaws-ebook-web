@@ -161,7 +161,7 @@ const AdminBlogs: React.FC = () => {
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="p-6">
+        <div className="p-3 lg:p-4 xl:p-6">
           <div className="text-center">Loading blogs...</div>
         </div>
       </AdminLayout>
@@ -170,7 +170,7 @@ const AdminBlogs: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="p-6">
+      <div className="p-3 lg:p-4 xl:p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Blog Management</h1>
           <Button onClick={() => setIsCreateDialogOpen(true)} className="flex items-center gap-2">

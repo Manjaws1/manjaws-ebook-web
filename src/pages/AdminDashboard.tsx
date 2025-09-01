@@ -16,7 +16,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+      <div className="p-3 lg:p-4 xl:p-6 space-y-3 lg:space-y-4 xl:space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Admin Dashboard</h1>
           <p className="text-sm lg:text-base text-muted-foreground">
