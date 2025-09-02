@@ -5,6 +5,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Accessibility Enhancements */
+.high-contrast {
+  filter: contrast(150%) saturate(120%);
+}
+
+.high-contrast * {
+  border-color: currentColor !important;
+}
+
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+.reading-mode {
+  font-family: 'Georgia', serif !important;
+  line-height: 1.6 !important;
+  letter-spacing: 0.02em !important;
+}
+
+.reading-mode h1, .reading-mode h2, .reading-mode h3, .reading-mode h4, .reading-mode h5, .reading-mode h6 {
+  font-weight: 600 !important;
+  margin-bottom: 1rem !important;
+}
+
+.reading-mode p {
+  margin-bottom: 1rem !important;
+}
+
+/* Focus indicators for better accessibility */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary)) !important;
+  outline-offset: 2px !important;
+}
+
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 8px;
+  z-index: 1000;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
 @layer base {
   :root {
     --background: 210 20% 98%;
