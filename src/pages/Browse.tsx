@@ -1,130 +1,150 @@
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EbookCard from "@/components/EbookCard";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
-import { useEbooks } from "@/hooks/useEbooks";
+import SearchComponent from "@/components/SearchComponent";
+import AccessibilityMenu from "@/components/AccessibilityMenu";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Browse = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [filteredBooks, setFilteredBooks] = useState<any[]>([]);
 
-  const { useGetEbooks, useGetCategories } = useEbooks();
-  const { data: ebooks = [], isLoading } = useGetEbooks("approved");
-  const { data: categories = [], isLoading: categoriesLoading } = useGetCategories();
+  // Get URL parameters for initial search
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    const searchParam = urlParams.get('search');
+    
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, []);
 
-  console.log("Browse - categories:", categories, "loading:", categoriesLoading);
+  const { data, isLoading } = useQuery({
+    queryKey: ['browse-ebooks'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ebooks')
+        .select('*')
+        .eq('status', 'approved')
+        .order('downloads', { ascending: false });
 
-  const filteredEbooks = useMemo(() => {
-    return ebooks.filter(ebook => {
-      const matchesSearch = ebook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           ebook.author.toLowerCase().includes(searchTerm.toLowerCase());
-      const trimmedSelectedCategory = selectedCategory.trim();
-      const trimmedEbookCategory = ebook.category?.trim();
-      const matchesCategory = trimmedSelectedCategory === "all" || trimmedEbookCategory === trimmedSelectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [ebooks, searchTerm, selectedCategory]);
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
+  // Filter books based on search and categories
+  React.useEffect(() => {
+    if (!data) return;
+    
+    let filtered = data;
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(book => 
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter(book => 
+        book.category === selectedCategory
+      );
+    }
+    
+    setFilteredBooks(filtered);
+  }, [data, searchQuery, selectedCategory]);
+
+  const handleSearch = (query: string, category?: string) => {
+    setSearchQuery(query);
+    setSelectedCategory(category || "");
+    
+    // Update URL parameters
+    const url = new URL(window.location.href);
+    if (query) {
+      url.searchParams.set('search', query);
+    } else {
+      url.searchParams.delete('search');
+    }
+    if (category) {
+      url.searchParams.set('category', category);
+    } else {
+      url.searchParams.delete('category');
+    }
+    window.history.replaceState({}, '', url);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Navbar />
-      <main className="flex-1 container mx-auto px-4 py-8">
+      
+      <main id="main-content" className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">Browse eBooks</h1>
-          <p className="text-lg text-muted-foreground mb-6">
-            Discover and download free eBooks from our community
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Browse Books
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            Discover your next favorite read from our collection of {data?.length || 0} books
           </p>
+        </div>
 
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search by title or author..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value.trim())}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categoriesLoading ? (
-                  <SelectItem value="loading" disabled>Loading categories...</SelectItem>
-                ) : categories && categories.length > 0 ? (
-                  categories.map((category) => (
-                    <SelectItem key={category.id} value={category.name.trim()}>
-                      {category.name}
-                    </SelectItem>
-                  ))
-                ) : (
-                  <SelectItem value="no-categories" disabled>No categories found</SelectItem>
-                )}
-              </SelectContent>
-            </Select>
-          </div>
+        {/* Enhanced Search Component */}
+        <SearchComponent
+          onSearch={handleSearch}
+          currentQuery={searchQuery}
+          currentCategory={selectedCategory}
+        />
 
-          {/* Category filter buttons */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            <Badge
-              variant={selectedCategory === "all" ? "default" : "outline"}
-              className="cursor-pointer"
-              onClick={() => setSelectedCategory("all")}
-            >
-              All Categories
-            </Badge>
-            {categoriesLoading ? (
-              <Badge variant="outline" className="animate-pulse">Loading...</Badge>
-            ) : categories && categories.length > 0 ? (
-              categories.map((category) => (
-                <Badge
-                  key={category.id}
-                  variant={selectedCategory.trim() === category.name.trim() ? "default" : "outline"}
-                  className="cursor-pointer"
-                  onClick={() => setSelectedCategory(category.name.trim())}
-                >
-                  {category.name}
-                </Badge>
-              ))
-            ) : (
-              <Badge variant="outline" className="opacity-50">No categories available</Badge>
-            )}
-          </div>
+        {/* Results */}
+        <div className="mb-6">
+          <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+            {isLoading ? "Loading..." : `Found ${filteredBooks.length} book(s)`}
+            {selectedCategory && ` in ${selectedCategory}`}
+            {searchQuery && ` matching "${searchQuery}"`}
+          </p>
         </div>
 
         {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, index) => (
+              <div key={index} className="animate-pulse">
+                <div className="bg-gray-200 dark:bg-gray-700 h-64 rounded-lg mb-4"></div>
+                <div className="bg-gray-200 dark:bg-gray-700 h-4 rounded mb-2"></div>
+                <div className="bg-gray-200 dark:bg-gray-700 h-4 rounded w-2/3"></div>
+              </div>
+            ))}
+          </div>
+        ) : filteredBooks.length === 0 ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading eBooks...</p>
+            <p className="text-xl text-gray-500 dark:text-gray-400 mb-4">
+              No books found matching your criteria
+            </p>
+            <p className="text-gray-400 dark:text-gray-500">
+              Try adjusting your search terms or browse different categories
+            </p>
           </div>
         ) : (
-          <>
-            <div className="mb-4 text-sm text-muted-foreground">
-              {filteredEbooks.length} eBook{filteredEbooks.length !== 1 ? 's' : ''} found
-              {selectedCategory !== "all" && ` in ${selectedCategory}`}
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredEbooks.map((ebook) => (
-                <EbookCard key={ebook.id} ebook={ebook} />
-              ))}
-            </div>
-
-            {filteredEbooks.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No eBooks found matching your criteria.</p>
-              </div>
-            )}
-          </>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredBooks.map((book) => (
+              <EbookCard key={book.id} ebook={book} />
+            ))}
+          </div>
         )}
       </main>
+      
+      <AccessibilityMenu />
       <Footer />
     </div>
   );

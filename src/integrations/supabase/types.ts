@@ -430,6 +430,23 @@ export type Database = {
         }
         Returns: undefined
       }
+      search_ebooks: {
+        Args: { search_query: string }
+        Returns: {
+          author: string
+          category: string
+          chapters: number
+          cover_image: string
+          created_at: string
+          description: string
+          downloads: number
+          file_url: string
+          id: string
+          is_featured: boolean
+          rank: number
+          title: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

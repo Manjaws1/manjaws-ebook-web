@@ -29,7 +29,7 @@ export class ChatbotService {
     return ChatbotService.instance;
   }
 
-  private async refreshCacheIfNeeded() {
+  private async refreshData() {
     const now = Date.now();
     if (now - this.lastFetch > this.cacheExpiry) {
       try {
@@ -45,9 +45,9 @@ export class ChatbotService {
         // Fetch approved ebooks
         const { data: ebooks } = await supabase
           .from('ebooks')
-          .select('id, title, author, category, description, downloads')
+          .select('id, title, author, category, description, downloads, status')
           .eq('status', 'approved')
-          .limit(100);
+          .limit(200);
         
         if (ebooks) {
           this.cachedEbooks = ebooks;
@@ -61,7 +61,9 @@ export class ChatbotService {
   }
 
   async generateResponse(userMessage: string): Promise<string> {
-    await this.refreshCacheIfNeeded();
+    const message = userMessage.toLowerCase();
+    
+    await this.refreshData();
     
     const lowerMessage = userMessage.toLowerCase();
     
