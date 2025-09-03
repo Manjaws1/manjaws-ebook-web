@@ -16,10 +16,10 @@ interface SearchComponentProps {
 const SearchComponent: React.FC<SearchComponentProps> = ({
   onSearch,
   currentQuery = "",
-  currentCategory = ""
+  currentCategory = "all"
 }) => {
   const [searchQuery, setSearchQuery] = useState(currentQuery);
-  const [selectedCategory, setSelectedCategory] = useState(currentCategory);
+  const [selectedCategory, setSelectedCategory] = useState(currentCategory || "all");
 
   const { data: categories } = useQuery({
     queryKey: ['search-categories'],
@@ -35,7 +35,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   });
 
   const handleSearch = () => {
-    onSearch(searchQuery.trim(), selectedCategory || undefined);
+    onSearch(searchQuery.trim(), selectedCategory === "all" ? undefined : selectedCategory);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -46,11 +46,11 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
 
   const clearSearch = () => {
     setSearchQuery("");
-    setSelectedCategory("");
+    setSelectedCategory("all");
     onSearch("", undefined);
   };
 
-  const hasActiveFilters = searchQuery.trim() !== "" || selectedCategory !== "";
+  const hasActiveFilters = searchQuery.trim() !== "" || selectedCategory !== "all";
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 mb-8">
@@ -78,7 +78,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories?.map((category) => (
                 <SelectItem key={category.name} value={category.name}>
                   {category.name}
@@ -121,18 +121,18 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
                 className="w-3 h-3 cursor-pointer hover:text-red-500" 
                 onClick={() => {
                   setSearchQuery("");
-                  onSearch("", selectedCategory || undefined);
+                  onSearch("", selectedCategory === "all" ? undefined : selectedCategory);
                 }}
               />
             </Badge>
           )}
-          {selectedCategory && (
+          {selectedCategory && selectedCategory !== "all" && (
             <Badge variant="secondary" className="flex items-center gap-1">
               Category: {selectedCategory}
               <X 
                 className="w-3 h-3 cursor-pointer hover:text-red-500" 
                 onClick={() => {
-                  setSelectedCategory("");
+                  setSelectedCategory("all");
                   onSearch(searchQuery.trim(), undefined);
                 }}
               />

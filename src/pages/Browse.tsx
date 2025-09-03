@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const Browse = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [filteredBooks, setFilteredBooks] = useState<any[]>([]);
 
   // Get URL parameters for initial search
@@ -21,6 +21,8 @@ const Browse = () => {
     
     if (categoryParam) {
       setSelectedCategory(categoryParam);
+    } else {
+      setSelectedCategory("all");
     }
     if (searchParam) {
       setSearchQuery(searchParam);
@@ -57,7 +59,7 @@ const Browse = () => {
     }
     
     // Filter by category
-    if (selectedCategory) {
+    if (selectedCategory && selectedCategory !== "all") {
       filtered = filtered.filter(book => 
         book.category === selectedCategory
       );
@@ -68,7 +70,7 @@ const Browse = () => {
 
   const handleSearch = (query: string, category?: string) => {
     setSearchQuery(query);
-    setSelectedCategory(category || "");
+    setSelectedCategory(category || "all");
     
     // Update URL parameters
     const url = new URL(window.location.href);
@@ -111,7 +113,7 @@ const Browse = () => {
         <div className="mb-6">
           <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
             {isLoading ? "Loading..." : `Found ${filteredBooks.length} book(s)`}
-            {selectedCategory && ` in ${selectedCategory}`}
+            {selectedCategory && selectedCategory !== "all" && ` in ${selectedCategory}`}
             {searchQuery && ` matching "${searchQuery}"`}
           </p>
         </div>
