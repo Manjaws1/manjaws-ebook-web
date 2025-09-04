@@ -250,24 +250,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
+    try {
+      const response = await supabase.functions.invoke('reset-password', {
+        body: { email }
       });
-    } else {
+
+      if (response.error) {
+        const errorMessage = response.error.message || "An error occurred";
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        return { error: response.error };
+      }
+
+      if (response.data?.error) {
+        toast({
+          title: "Error",
+          description: response.data.error,
+          variant: "destructive",
+        });
+        return { error: { message: response.data.error } };
+      }
+
       toast({
         title: "Success",
         description: "Password reset email sent! Please check your inbox.",
       });
+      
+      return { error: null };
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+      return { error };
     }
-    
-    return { error };
   };
 
   // Admin status derived from server-side check only

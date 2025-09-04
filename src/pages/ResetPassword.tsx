@@ -30,14 +30,34 @@ const ResetPassword: React.FC = () => {
   const allPasswordValid = Object.values(passwordChecks).every(Boolean) && password === confirmPassword;
 
   useEffect(() => {
-    // Ensure the password recovery session is present
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        // If no session token, user likely opened the page directly
-        toast({ title: "Link expired", description: "Please request a new password reset link.", variant: "destructive" });
+    // Check for recovery session and validate token
+    const checkRecoverySession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error || !session) {
+        toast({ 
+          title: "Invalid or expired reset link", 
+          description: "Please request a new password reset link.", 
+          variant: "destructive" 
+        });
+        navigate("/login");
+        return;
       }
-    });
-  }, [toast]);
+
+      // Verify this is actually a recovery session
+      if (!session.user?.aud || session.user.aud !== 'authenticated') {
+        toast({ 
+          title: "Invalid reset link", 
+          description: "This link is not valid for password reset.", 
+          variant: "destructive" 
+        });
+        navigate("/login");
+        return;
+      }
+    };
+
+    checkRecoverySession();
+  }, [toast, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,15 +68,34 @@ const ResetPassword: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    const { error } = await supabase.auth.updateUser({ password });
+    
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
 
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Password updated", description: "You can now log in with your new password." });
-      await supabase.auth.signOut();
-      navigate("/login");
+      if (error) {
+        toast({ 
+          title: "Error", 
+          description: error.message || "Failed to update password", 
+          variant: "destructive" 
+        });
+      } else {
+        toast({ 
+          title: "Password reset successful", 
+          description: "Please log in with your new password."
+        });
+        
+        // Sign out the recovery session and redirect to login
+        await supabase.auth.signOut();
+        navigate("/login");
+      }
+    } catch (error: any) {
+      toast({ 
+        title: "Error", 
+        description: "An unexpected error occurred", 
+        variant: "destructive" 
+      });
     }
+    
     setIsSubmitting(false);
   };
 
