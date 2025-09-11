@@ -46,7 +46,7 @@ const Index: React.FC = () => {
               <div className="relative group">
                 <div className="absolute -inset-2 lg:-inset-4 bg-gradient-to-r from-secondary to-primary rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
                 <img 
-                  src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2000&q=80" 
+                  src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=60&fm=webp" 
                   alt="Digital library with books and reading experience" 
                   className="relative rounded-2xl shadow-2xl max-w-full h-auto group-hover:scale-105 transition-transform duration-700 max-h-80 lg:max-h-none object-cover"
                   loading="lazy"

@@ -99,7 +99,7 @@ const LatestBlogs: React.FC = () => {
                 >
                   <div className="relative overflow-hidden h-48">
                     <img
-                      src={blog.featured_image || `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80`}
+                      src={blog.featured_image || `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=60&fm=webp`}
                       alt={blog.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       loading="lazy"
