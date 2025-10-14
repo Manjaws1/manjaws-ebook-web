@@ -100,7 +100,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       <aside className={`
         w-64 bg-primary text-white fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out flex flex-col
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:translate-x-0 md:relative md:z-10
+        md:translate-x-0
       `}>
         <div className="p-4 lg:p-6 border-b border-primary-800">
           <Link to="/" className="flex items-center">
@@ -164,10 +164,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 md:ml-64 pt-16 md:pt-0 min-h-screen">
-        <div className="h-full max-w-none">
-          {children}
-        </div>
+      <main className="flex-1 pt-16 md:pt-0 md:ml-64 min-h-screen">
+        {children}
       </main>
     </div>
   );
