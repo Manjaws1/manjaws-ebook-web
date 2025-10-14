@@ -10,6 +10,9 @@ interface ResetPasswordRequest {
   email: string;
 }
 
+// Email validation regex
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -34,6 +37,20 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
 
+      // Validate email format
+      if (!EMAIL_REGEX.test(email)) {
+        return new Response(
+          JSON.stringify({ error: "Invalid email format" }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          }
+        );
+      }
+
+      // Sanitize email
+      const sanitizedEmail = email.trim().toLowerCase();
+
       // Check if user exists in auth.users table
       const { data: users, error: userError } = await supabase.auth.admin.listUsers();
       
@@ -48,7 +65,7 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
 
-      const userExists = users.users.some(user => user.email?.toLowerCase() === email.toLowerCase());
+      const userExists = users.users.some(user => user.email?.toLowerCase() === sanitizedEmail);
 
       if (!userExists) {
         return new Response(
@@ -63,7 +80,7 @@ const handler = async (req: Request): Promise<Response> => {
       // Send password reset email with secure token
       const { error: resetError } = await supabase.auth.admin.generateLink({
         type: 'recovery',
-        email: email,
+        email: sanitizedEmail,
         options: {
           redirectTo: `${req.headers.get('origin') || 'http://localhost:5173'}/reset-password`
         }

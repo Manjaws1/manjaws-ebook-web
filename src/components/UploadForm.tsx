@@ -8,6 +8,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Upload, FileText, Image } from "lucide-react";
 import { useEbooks } from "@/hooks/useEbooks";
 import CategorySelect from "./CategorySelect";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+
+// Input validation schema
+const ebookSchema = z.object({
+  title: z.string().trim().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
+  author: z.string().trim().min(1, "Author is required").max(100, "Author must be less than 100 characters"),
+  description: z.string().trim().max(2000, "Description must be less than 2000 characters").optional(),
+});
 
 const UploadForm = () => {
   const [title, setTitle] = useState("");
@@ -19,12 +28,31 @@ const UploadForm = () => {
 
   const { useUploadEbook } = useEbooks();
   const uploadMutation = useUploadEbook();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title || !author || categories.length === 0 || !file) {
       return;
+    }
+
+    // Validate inputs
+    try {
+      ebookSchema.parse({
+        title,
+        author,
+        description,
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     uploadMutation.mutate({
