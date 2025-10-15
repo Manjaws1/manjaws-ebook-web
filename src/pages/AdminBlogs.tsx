@@ -148,11 +148,11 @@ const AdminBlogs: React.FC = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "published":
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+        return <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />;
       case "draft":
-        return <Clock className="h-4 w-4 text-amber-600" />;
+        return <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
       case "archived":
-        return <Archive className="h-4 w-4 text-gray-600" />;
+        return <Archive className="h-4 w-4 text-muted-foreground" />;
       default:
         return null;
     }
@@ -182,7 +182,7 @@ const AdminBlogs: React.FC = () => {
         {/* Search */}
         <div className="mb-6">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search blogs..."
               value={searchTerm}
@@ -193,7 +193,7 @@ const AdminBlogs: React.FC = () => {
         </div>
 
         {/* Blogs Table */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-card rounded-lg shadow-sm border">
           <Table>
             <TableHeader>
               <TableRow>
@@ -216,10 +216,10 @@ const AdminBlogs: React.FC = () => {
                       {getStatusIcon(blog.status)}
                       <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         blog.status === 'published' 
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                           : blog.status === 'draft'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
+                          : 'bg-muted text-muted-foreground'
                       }`}>
                         {blog.status}
                       </span>
@@ -239,7 +239,7 @@ const AdminBlogs: React.FC = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteBlog(blog.id)}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -286,7 +286,7 @@ const AdminBlogs: React.FC = () => {
                     id="edit-status"
                     value={editingBlog.status}
                     onChange={(e) => setEditingBlog({ ...editingBlog, status: e.target.value })}
-                    className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+                    className="col-span-3 px-3 py-2 border border-input rounded-md bg-background"
                   >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
@@ -376,7 +376,7 @@ const AdminBlogs: React.FC = () => {
                   id="create-status"
                   value={newBlog.status}
                   onChange={(e) => setNewBlog({ ...newBlog, status: e.target.value })}
-                  className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+                  className="col-span-3 px-3 py-2 border border-input rounded-md bg-background"
                 >
                   <option value="draft">Draft</option>
                   <option value="published">Published</option>

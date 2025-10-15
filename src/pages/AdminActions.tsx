@@ -28,26 +28,26 @@ const AdminActions: React.FC = () => {
   const getTargetIcon = (targetType: string) => {
     switch (targetType) {
       case "profile":
-        return <User className="h-4 w-4 text-blue-600" />;
+        return <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
       case "blog":
-        return <PenTool className="h-4 w-4 text-green-600" />;
+        return <PenTool className="h-4 w-4 text-green-600 dark:text-green-400" />;
       case "ebook":
-        return <BookOpen className="h-4 w-4 text-purple-600" />;
+        return <BookOpen className="h-4 w-4 text-purple-600 dark:text-purple-400" />;
       default:
-        return <Shield className="h-4 w-4 text-gray-600" />;
+        return <Shield className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const getActionBadgeColor = (actionType: string) => {
     switch (actionType) {
       case "create":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
       case "update":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
       case "delete":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-muted-foreground";
     }
   };
 
@@ -71,7 +71,7 @@ const AdminActions: React.FC = () => {
         {/* Search */}
         <div className="mb-6">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search actions..."
               value={searchTerm}
@@ -82,7 +82,7 @@ const AdminActions: React.FC = () => {
         </div>
 
         {/* Actions Table */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-card rounded-lg shadow-sm border">
           <Table>
             <TableHeader>
               <TableRow>
@@ -99,7 +99,7 @@ const AdminActions: React.FC = () => {
                 <TableRow key={action.id}>
                   <TableCell>
                     <div className="flex items-center">
-                      <User className="h-5 w-5 text-gray-400 mr-2" />
+                      <User className="h-5 w-5 text-muted-foreground mr-2" />
                       <span className="font-medium">
                         {action.admin?.full_name || action.admin?.email || "Unknown"}
                       </span>
@@ -117,28 +117,28 @@ const AdminActions: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                    <code className="text-xs bg-muted px-2 py-1 rounded">
                       {action.target_id.slice(0, 8)}...
                     </code>
                   </TableCell>
                   <TableCell>
                     {action.details ? (
                       <details className="cursor-pointer">
-                        <summary className="text-sm text-blue-600 hover:text-blue-800">
+                        <summary className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                           View Details
                         </summary>
-                        <pre className="text-xs bg-gray-50 p-2 mt-1 rounded overflow-auto max-w-xs">
+                        <pre className="text-xs bg-muted p-2 mt-1 rounded overflow-auto max-w-xs">
                           {JSON.stringify(action.details, null, 2)}
                         </pre>
                       </details>
                     ) : (
-                      <span className="text-gray-400">No details</span>
+                      <span className="text-muted-foreground">No details</span>
                     )}
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
                       {new Date(action.created_at).toLocaleDateString()}
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-muted-foreground">
                         {new Date(action.created_at).toLocaleTimeString()}
                       </div>
                     </div>
@@ -150,7 +150,7 @@ const AdminActions: React.FC = () => {
         </div>
 
         {filteredActions.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-muted-foreground">
             No admin actions found.
           </div>
         )}

@@ -78,11 +78,11 @@ const AdminUsers: React.FC = () => {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "admin":
-        return <Shield className="h-4 w-4 text-red-600" />;
+        return <Shield className="h-4 w-4 text-red-600 dark:text-red-400" />;
       case "moderator":
-        return <UserCircle className="h-4 w-4 text-blue-600" />;
+        return <UserCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
       default:
-        return <User className="h-4 w-4 text-gray-600" />;
+        return <User className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -106,7 +106,7 @@ const AdminUsers: React.FC = () => {
         {/* Search */}
         <div className="mb-6">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search users..."
               value={searchTerm}
@@ -117,7 +117,7 @@ const AdminUsers: React.FC = () => {
         </div>
 
         {/* Users Table */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-card rounded-lg shadow-sm border">
           <Table>
             <TableHeader>
               <TableRow>
@@ -133,7 +133,7 @@ const AdminUsers: React.FC = () => {
                 <TableRow key={profile.id}>
                   <TableCell>
                     <div className="flex items-center">
-                      <UserCircle className="h-8 w-8 text-gray-400 mr-3" />
+                      <UserCircle className="h-8 w-8 text-muted-foreground mr-3" />
                       <span className="font-medium">{profile.full_name || "No name"}</span>
                     </div>
                   </TableCell>
@@ -143,10 +143,10 @@ const AdminUsers: React.FC = () => {
                       {getRoleIcon(profile.role)}
                       <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         profile.role === 'admin' 
-                          ? 'bg-red-100 text-red-800' 
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' 
                           : profile.role === 'moderator'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                          : 'bg-muted text-muted-foreground'
                       }`}>
                         {profile.role}
                       </span>
@@ -166,7 +166,7 @@ const AdminUsers: React.FC = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteProfile(profile.id)}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -204,7 +204,7 @@ const AdminUsers: React.FC = () => {
                     id="edit-email"
                     value={editingProfile.email}
                     disabled
-                    className="col-span-3 bg-gray-50"
+                    className="col-span-3 bg-muted"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -213,7 +213,7 @@ const AdminUsers: React.FC = () => {
                     id="edit-role"
                     value={editingProfile.role}
                     onChange={(e) => setEditingProfile({ ...editingProfile, role: e.target.value })}
-                    className="col-span-3 px-3 py-2 border border-gray-300 rounded-md"
+                    className="col-span-3 px-3 py-2 border border-input rounded-md bg-background"
                     disabled={editingProfile.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()}
                     title={editingProfile.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase() ? "You cannot change the role of the Super Admin" : undefined}
                   >
