@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -71,21 +72,24 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   ];
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-background">
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-primary text-white flex items-center justify-between px-4 z-50">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-primary text-primary-foreground flex items-center justify-between px-4 z-50">
         <Link to="/" className="flex items-center">
           <span className="text-lg font-bold">Manjaws</span>
           <span className="text-secondary ml-1">Admin</span>
         </Link>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="text-white hover:bg-primary-800"
-        >
-          {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="text-primary-foreground hover:bg-primary/80"
+          >
+            {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </Button>
+        </div>
       </div>
 
       {/* Mobile Overlay */}
@@ -98,17 +102,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
       {/* Admin Sidebar */}
       <aside className={`
-        w-64 bg-primary text-white fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out flex flex-col
+        w-64 bg-primary text-primary-foreground fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out flex flex-col
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0
       `}>
-        <div className="p-4 lg:p-6 border-b border-primary-800">
-          <Link to="/" className="flex items-center">
-            <span className="text-lg lg:text-xl font-bold">Manjaws</span>
-            <span className="text-secondary ml-1 text-lg lg:text-xl">Admin</span>
-          </Link>
+        <div className="p-4 lg:p-6 border-b border-primary/20">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center">
+              <span className="text-lg lg:text-xl font-bold">Manjaws</span>
+              <span className="text-secondary ml-1 text-lg lg:text-xl">Admin</span>
+            </Link>
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
+          </div>
           {profile && (
-            <div className="mt-2 text-xs lg:text-sm text-gray-200 truncate">
+            <div className="mt-2 text-xs lg:text-sm text-primary-foreground/80 truncate">
               Welcome, {profile.full_name || profile.email}
             </div>
           )}
@@ -127,8 +136,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     onClick={() => setSidebarOpen(false)}
                     className={`flex items-center px-3 lg:px-4 py-2.5 lg:py-3 rounded-md transition-colors text-sm lg:text-base ${
                       isActive
-                        ? "bg-primary-800 text-white"
-                        : "text-gray-200 hover:text-white hover:bg-primary-700"
+                        ? "bg-primary-foreground/10 text-primary-foreground font-medium"
+                        : "text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/5"
                     }`}
                   >
                     <Icon className="mr-2 lg:mr-3 h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
@@ -140,10 +149,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </ul>
         </nav>
         
-        <div className="p-2 lg:p-4 border-t border-primary-800 space-y-2">
+        <div className="p-2 lg:p-4 border-t border-primary/20 space-y-2">
           <Button
             variant="ghost"
-            className="w-full justify-start text-gray-200 hover:text-white hover:bg-primary-700 text-sm lg:text-base p-2 lg:p-3"
+            className="w-full justify-start text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/5 text-sm lg:text-base p-2 lg:p-3"
             onClick={() => {
               navigate('/profile');
               setSidebarOpen(false);
@@ -154,7 +163,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </Button>
           <Button
             variant="ghost"
-            className="w-full justify-start text-gray-200 hover:text-white hover:bg-primary-700 text-sm lg:text-base p-2 lg:p-3"
+            className="w-full justify-start text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/5 text-sm lg:text-base p-2 lg:p-3"
             onClick={handleLogout}
           >
             <LogOut className="mr-2 lg:mr-3 h-4 w-4 lg:h-5 lg:w-5 flex-shrink-0" />
