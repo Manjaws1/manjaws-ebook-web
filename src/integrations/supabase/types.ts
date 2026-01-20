@@ -422,10 +422,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      get_current_user_role: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -437,18 +434,9 @@ export type Database = {
         Args: { ebook_uuid: string; user_uuid: string }
         Returns: undefined
       }
-      is_email_super_admin: {
-        Args: { p_email: string }
-        Returns: boolean
-      }
-      is_super_admin_by_user: {
-        Args: { p_user_id: string }
-        Returns: boolean
-      }
-      is_user_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      is_email_super_admin: { Args: { p_email: string }; Returns: boolean }
+      is_super_admin_by_user: { Args: { p_user_id: string }; Returns: boolean }
+      is_user_admin: { Args: { user_id: string }; Returns: boolean }
       log_admin_action: {
         Args: {
           action_type_param: string
